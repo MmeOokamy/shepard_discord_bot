@@ -63,16 +63,18 @@ class CommandantShepard(commands.Bot):
                     self.max_strength = max_strength
                     self.alive = alive
 
-            async def attack(f, adv):
+            async def attack(f, adv, round):
+                await message.channel.send(f"Round: {round}")
                 atk_f = random.randint(f.min_strength, f.max_strength)
                 adv.pv -= atk_f
                 await message.channel.send(f"{f.name} attaque, {adv.name} perd {atk_f} pv")
                 atk_b = random.randint(adv.min_strength, adv.max_strength)
                 f.pv -= atk_b
-                await message.channel.send(f"{adv.name} riposte, {f.name} perd {atk_b} pv")
+                await message.channel.send(f"{adv.name} attaque, {f.name} perd {atk_b} pv")
                 await message.channel.send(f"{f.name} : {f.pv} pv, {adv.name} : {adv.pv} pv")
 
-            async def healer(f, adv):
+            async def healer(f, adv, round):
+                await message.channel.send(f"Round: {round}")
                 potion = random.randint(15, 50)
                 f.heal -= 1
                 f.pv += potion
@@ -82,6 +84,7 @@ class CommandantShepard(commands.Bot):
                 f.pv -= atk_b
                 await message.channel.send(f"{adv.name} attaque', {f.name} perd {atk_b} pv {f.name}")
                 await message.channel.send(f"{f.name} : {f.pv} pv, {adv.name} : {adv.pv} pv")
+                
 
             await message.channel.send(f"Un combat contre un Krogan???")
             await message.reply('1<-Oui , 2<-Non', mention_author=True)
@@ -98,6 +101,7 @@ class CommandantShepard(commands.Bot):
                 # init both fighters
                 fighter = Fighter(message.author.name, 50, 3, 5, 10)
                 botghter = Fighter("Grunt", 50, 0, 7, 15)
+                round_counter = 1
 
                 # presentation of the characteristics of the fighters
                 await message.channel.send(f"Bienvenue pour le combat entre deux poids lourd :devilparrot:")
@@ -112,7 +116,8 @@ class CommandantShepard(commands.Bot):
                 await message.channel.send("Fight!!")
 
                 # First attaque no choice!
-                await attack(fighter, botghter)
+                await attack(fighter, botghter, round_counter)
+                round_counter +=1
 
                 while fighter.alive or botghter.alive:
                     await message.reply('1<- Attaquer || 2<- Potion de Soin', mention_author=True)
@@ -122,9 +127,11 @@ class CommandantShepard(commands.Bot):
                         await message.channel.send("il faut faire un choix!!")
                     else:
                         if int(decision.content) == 1:
-                            await attack(fighter, botghter)
+                            await attack(fighter, botghter, round_counter)
+                            round_counter +=1
                         else:
-                            await healer(fighter, botghter)
+                            await healer(fighter, botghter, round_counter)
+                            round_counter +=1
 
                     if botghter.pv <= 0 and fighter.pv <= 0:
                         fighter.alive = False
