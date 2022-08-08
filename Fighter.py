@@ -29,7 +29,9 @@ class Fighter:
 
     def touch_or_esquive(self, adversary):
         d20 = random.randint(1, 20)
-        toe = True if (d20 * self.strength) >= adversary.endurance else False
+        atk = (d20 * self.strength) / self.agility
+        adv = (adversary.endurance * adversary.perception) / adversary.luck
+        toe = True if atk >= adv else False
         return toe
 
     def attack(self, adversary):
@@ -41,6 +43,7 @@ class Fighter:
     def take_care_of_yourself(self):
         pv_potion = random.randint(15, 25)
         self.heal -= 1
+        self.pv += pv_potion
         return pv_potion
 
     def reduction_of_pv(self, damage):

@@ -23,6 +23,7 @@ class CommandantShepard(commands.Bot):
     async def on_ready(self):
         print(f"{self.user.name} is ready")
         print(self.user.id)
+        print(self.user)
         print('------')
 
     async def on_message(self, message):
@@ -93,7 +94,6 @@ class CommandantShepard(commands.Bot):
                 await message.channel.send(f"Hé hop! Dans le gosier !")
                 pv_potion = player.take_care_of_yourself()
                 await message.channel.send(f"La potion de vitalité lui donne {pv_potion} de pv en plus")
-                player.pv += pv_potion
                 await message.channel.send(f"{player.name} a maintenant {player.pv} pv ...")
 
             await message.channel.send("Un combat contre un Krogan ???")
@@ -111,18 +111,19 @@ class CommandantShepard(commands.Bot):
                 # init both fighters
                 # player = Fighter(name=,strength=, perception=, endurance=, charisma=, intelligence=, agility=, luck=)
                 player_one = Fighter(name=message.author.name, strength=7, perception=4, endurance=10, charisma=5,
-                                     intelligence=7, agility=3, luck=2)
+                                     intelligence=7, agility=5, luck=2)
                 player_two = Fighter(name="Grunt", strength=7, perception=4, endurance=15, charisma=5,
-                                     intelligence=7, agility=3, luck=2)
+                                     intelligence=5, agility=3, luck=4)
 
                 # presentation of the characteristics of the fighters
                 await message.channel.send(f"Bienvenue pour le combat entre deux poids lourd :imp:")
                 await message.channel.send(
-                    f"Dans le coin rouge: {player_one.name} avec {player_two.pv} PV, {player_one.heal} Potion "
-                    f"de soin et une force estimé a {player_two.strength} ")
-                await message.channel.send(f"Dans le coin bleu: {player_two.name} avec {player_two.pv} PV, pas "
-                                           f"besoin de potion pour un Krogan, la force de ce guerrier est de "
-                                           f"{player_two.strength} !")
+                    f"Dans le coin rouge: :point_left:{player_one.name} avec {player_two.pv} PV, {player_one.heal} "
+                    f"Potions de soin et une force estimé a {player_two.strength}:muscle: !")
+
+                await message.channel.send(f"Dans le coin bleu: :point_right:{player_two.name} avec {player_two.pv} PV,"
+                                           f" pas besoin de potion pour un Krogan, la force de ce guerrier est de "
+                                           f"{player_two.strength}:muscle: !")
 
                 await message.channel.send("🥊")
                 await message.channel.send("Fight!!")
@@ -130,12 +131,13 @@ class CommandantShepard(commands.Bot):
                 # first round
                 await battle(player_one, player_two)
 
-                while player_one.alive or player_two.alive:
+                # Tant que les deux sont en vies
+                while player_one.alive and player_two.alive:
                     if player_one.heal == 0:
-                        await message.reply("1<- Attaquer ||  3 <- Etat", mention_author=True)
+                        await message.reply("1<- Attaquer ||  3 <- Etat PV", mention_author=True)
                     else:
                         await message.reply(f"1<- Attaquer |-| 2<- Potion de Soin reste : {player_one.heal} |-| 3 <- "
-                                            f"Etat",
+                                            f"Etat PV",
                                             mention_author=True)
                     try:
                         decision = await self.wait_for('message', check=is_correct)
@@ -151,21 +153,14 @@ class CommandantShepard(commands.Bot):
                             await healer(player_one)
                         else:
                             await message.channel.send("Tu n'as plus de potion !")
-
                     elif int(decision.content) == 3:
                         await status_fighter(player_one, player_two)
-                    elif int(decision.content) == 4:
-                        pass
+                else:
+                    if not player_one.alive:
+                        await message.channel.send(f"{player_two.name} est le grand gagnant :muscle:!")
+                    elif not player_two.alive:
+                        await message.channel.send(f"{player_one.name} gagne contre {player_two.name} :muscle:!")
 
-                    if player_one.alive is False and not player_two.alive:
-                        await message.channel.send("Les deux combattant sont K.O.")
-                        break
-                    elif not player_one.alive:
-                        await message.channel.send(f"{player_two.name} Win!")
-                        break
-                    elif player_two.pv <= 0:
-                        await message.channel.send(f"{player_one.name} Win!")
-                        break
             else:
                 await message.channel.send("Ok ciao !", mention_author=True)
 
