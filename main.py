@@ -6,6 +6,7 @@ import random
 import asyncio
 
 from Fighter import Fighter
+from sentence import say_hello
 
 load_dotenv()
 
@@ -26,16 +27,16 @@ class CommandantShepard(commands.Bot):
 
     async def on_message(self, message):
         if "shepard" in message.content.lower():
-            await message.channel.send(content=f"oui @{message.author.display_name} ?")
+            await message.channel.send(content=f"@{message.author.display_name}, {random.choice(say_hello)}")
 
-        if message.content.startswith('!cmd'):
+        elif message.content.startswith('!cmd'):
             await message.reply('hello, game(Nombre Mystère), fight(ToiVSGrunt)', mention_author=True)
 
-        if message.content.startswith('!hello'):
+        elif message.content.startswith('!hello'):
             await message.reply('Hello!', mention_author=True)
 
         # Mini mystery number Game
-        if message.content.startswith('!game'):
+        elif message.content.startswith('!game'):
             await message.reply('entre 1 et 10', mention_author=True)
 
             def is_correct(m):
@@ -55,29 +56,36 @@ class CommandantShepard(commands.Bot):
                 await message.channel.send('Oops. Perdu c\'était {}.'.format(answer), mention_author=True)
 
         # Mini Rpg Fight Game
-        if message.content.startswith('!fight'):
-
+        elif message.content.startswith('!fight'):
             async def status_fighter(player, adv):
-                await message.channel.send(f"{player.name} : {player.alive}, {player.pv}")
-                await message.channel.send(f"{adv.name} : {adv.alive}, {adv.pv}")
+                await message.channel.send(f"{player.name} : {player.pv}")
+                await message.channel.send(f"{adv.name} : {adv.pv}")
 
             async def battle(player, adv):
-                damage = player.attack(adv)
-                adv.reduction_of_pv(damage)
-                await message.channel.send(f"{player.name} attaque, {adv.name} prend {damage} de dégâts")
-
-                if 0 < adv.pv:
-                    adv_damage = adv.attack(player)
-                    player.reduction_of_pv(adv_damage)
-                    await message.channel.send(f"{adv.name} riposte, {player.name} perd {adv_damage} de pv")
-                    if 0 < player.pv:
-                        await message.channel.send(f"{player.name} : {player.pv} pv, {adv.name} : {adv.pv} pv")
-                    else:
-                        player.alive = False
-                        await message.channel.send(f"{player.name} n'a plus de pv.")
+                # player_one attaque ou rate
+                if player.touch_or_esquive(adv):
+                    damage = player.attack(adv)
+                    adv.reduction_of_pv(damage)
+                    await message.channel.send(f"{player.name} attaque, {adv.name} prend {damage} de dégâts")
                 else:
-                    adv.alive = False
+                    await message.channel.send(f"{player.name} attaque mais {adv.name} esquive =p !")
+
+                # Check adv mort ou en vie
+                if adv.alive is False:
                     await message.channel.send(f"{adv.name} n'a plus de pv.")
+                else:
+                    # player_two attaque ou rate
+                    if adv.touch_or_esquive(player):
+                        adv_damage = adv.attack(player)
+                        player.reduction_of_pv(adv_damage)
+                        await message.channel.send(f"{adv.name} riposte, {player.name} perd {adv_damage} de pv")
+                    else:
+                        await message.channel.send(f"{adv.name} attaque mais {player.name} reussi a esquiver !")
+
+                if player.alive is False:
+                    await message.channel.send(f"{player.name} n'a plus de pv.")
+
+                await message.channel.send(f"{player.name} : {player.pv} pv, {adv.name} : {adv.pv} pv")
 
             async def healer(player):
                 await message.channel.send(
@@ -85,8 +93,8 @@ class CommandantShepard(commands.Bot):
                 await message.channel.send(f"Hé hop! Dans le gosier !")
                 pv_potion = player.take_care_of_yourself()
                 await message.channel.send(f"La potion de vitalité lui donne {pv_potion} de pv en plus")
-                player.endurance += pv_potion
-                await message.channel.send(f"{player.name} a maintenant {player.endurance} pv ...")
+                player.pv += pv_potion
+                await message.channel.send(f"{player.name} a maintenant {player.pv} pv ...")
 
             await message.channel.send("Un combat contre un Krogan ???")
             await message.reply('1 <-Oui , 2 <-Non', mention_author=True)
@@ -137,12 +145,7 @@ class CommandantShepard(commands.Bot):
                         pass
 
                     if int(decision.content) == 1:
-                        if player_one.touch_or_esquive(player_two) is True:
-                            # await message.channel.send(f"touche !!")
-                            await battle(player_one, player_two)
-                        else:
-                            await message.channel.send(f"{player_one.name} attaque mais {player_two.name} esquive =p !")
-
+                        await battle(player_one, player_two)
                     elif int(decision.content) == 2:
                         if player_one.heal != 0:
                             await healer(player_one)
@@ -164,7 +167,7 @@ class CommandantShepard(commands.Bot):
                         await message.channel.send(f"{player_one.name} Win!")
                         break
             else:
-                await message.channel.send("Ok a plus", mention_author=True)
+                await message.channel.send("Ok ciao !", mention_author=True)
 
         if message.content.startswith('!color'):
             await message.channel.send("```diff\n- hellow\n```", mention_author=True)

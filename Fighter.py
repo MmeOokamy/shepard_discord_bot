@@ -45,4 +45,7 @@ class Fighter:
 
     def reduction_of_pv(self, damage):
         self.pv -= damage
-        return self.pv
+        if self.pv <= 0:
+            self.pv = 0
+            self.alive = False
+
