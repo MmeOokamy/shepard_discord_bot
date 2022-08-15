@@ -65,7 +65,7 @@ class CommandantShepard(commands.Bot):
             async def battle(player, adv):
                 # player_one attaque ou rate
                 if player.touch_or_esquive(adv):
-                    damage = player.attack(adv)
+                    damage = player.attack()
                     adv.reduction_of_pv(damage)
                     await message.channel.send(f"{player.name} attaque, {adv.name} prend {damage} de dégâts")
                 else:
@@ -105,7 +105,7 @@ class CommandantShepard(commands.Bot):
             try:
                 guess = await self.wait_for('message', check=is_correct)
             except asyncio:
-                return await message.channel.send("c'est 1 ou 2", mention_author=True)
+                return await message.channel.send("C'est 1 ou 2", mention_author=True)
 
             if int(guess.content) == 1:
                 # init both fighters

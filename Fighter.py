@@ -7,6 +7,7 @@ class Fighter:
     alive = True
     heal = 2
     pv = 50  # pv for all?
+    critical_rate = 0.25
 
     def __init__(self, name, strength, perception, endurance, charisma, intelligence, agility, luck):
         assert name.isalnum(), "Attribut 'name': alphanumeric "
@@ -34,7 +35,14 @@ class Fighter:
         toe = True if atk >= adv else False
         return toe
 
-    def attack(self, adversary):
+    def is_critical(self):
+        return True if random.randint(1, self.luck) == 1 else False
+
+    def critical_attack(self):
+        damage = self.attack() * self.critical_rate
+        return damage
+
+    def attack(self):
         x = random.randint(1, 10)
         damage = int(self.strength) + x
         damage = round(damage)
@@ -51,4 +59,3 @@ class Fighter:
         if self.pv <= 0:
             self.pv = 0
             self.alive = False
-
