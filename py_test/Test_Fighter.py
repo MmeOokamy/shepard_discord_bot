@@ -9,9 +9,9 @@ from Fighter import Fighter
 class TestFighter(unittest.TestCase):
 
     def setUp(self):
-        self.player_one = Fighter(name="Shepard", strength=7, perception=4, endurance=15, charisma=5,
-                                  intelligence=5, agility=3, luck=4)
-        self.player_two = Fighter(name="Grunt", strength=7, perception=4, endurance=15, charisma=5,
+        self.player_one = Fighter(name="Shepard", strength=7, perception=5, endurance=10, charisma=6,
+                                  intelligence=5, agility=5, luck=4)
+        self.player_two = Fighter(name="Grunt", strength=8, perception=4, endurance=15, charisma=5,
                                   intelligence=5, agility=3, luck=4)
 
     def test_player_is_instance_of_fighter(self):

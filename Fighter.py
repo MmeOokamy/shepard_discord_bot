@@ -36,11 +36,10 @@ class Fighter:
         return toe
 
     def is_critical(self):
-        return True if random.randint(1, self.luck) == 1 else False
+        return True if random.randint(1, (self.luck+self.agility)) == 1 else False
 
     def critical_attack(self):
-        damage = self.attack() * self.critical_rate
-        return damage
+        return self.attack() * self.critical_rate
 
     def attack(self):
         x = random.randint(1, 10)
