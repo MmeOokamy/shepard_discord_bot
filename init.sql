@@ -1,0 +1,17 @@
+--DROP TABLE IF EXISTS user;
+--DROP TABLE IF EXISTS fight;
+
+CREATE TABLE IF NOT EXISTS user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user TEXT,
+    user_id TEXT NOT NULL UNIQUE,
+    score INTEGER,
+    xp INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS fight (
+    user_id INTEGER PRIMARY KEY UNIQUE,
+    fight_win INTEGER DEFAULT 0,
+    fight_loose INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES user (user_id)
+)

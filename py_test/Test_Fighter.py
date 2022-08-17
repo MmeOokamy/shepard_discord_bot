@@ -2,17 +2,23 @@
 import unittest
 import sys
 
-sys.path.append('.')
-from Fighter import Fighter
+sys.path.insert(0, ".")
+from Fighter import Fighter, create_fighter
 
 
 class TestFighter(unittest.TestCase):
 
     def setUp(self):
-        self.player_one = Fighter(name="Shepard", strength=7, perception=5, endurance=10, charisma=6,
-                                  intelligence=5, agility=5, luck=4)
-        self.player_two = Fighter(name="Grunt", strength=8, perception=4, endurance=15, charisma=5,
-                                  intelligence=5, agility=3, luck=4)
+        self.player_one = create_fighter('Shepard')
+        self.player_two = create_fighter('Grunt')
+        # self.player_one = Fighter(name="Shepard", strength=7, perception=5, endurance=10, charisma=6,
+        #                           intelligence=5, agility=5, luck=4)
+        # self.player_two = Fighter(name="Grunt", strength=8, perception=4, endurance=15, charisma=5,
+        #                           intelligence=5, agility=3, luck=4)
+
+    def test_special(self):
+        print(self.player_one.special())
+        print(self.player_two.special())
 
     def test_player_is_instance_of_fighter(self):
         self.assertIsInstance(self.player_one, Fighter)
