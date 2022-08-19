@@ -73,4 +73,35 @@ def db_user_stats(user_id):
     ''').fetchone()
 
 
+def db_level():
+    return c.execute('''
+        SELECT *
+        FROM level
+        ORDER BY lvl_nb ASC
+    ''').fetchall()
+
+
+def db_get_xp(user_id):
+    return c.execute(f'''
+        SELECT xp
+        FROM user 
+        WHERE user_id = {user_id}
+    ''').fetchone()
+
+
+def db_user_level(user_id):
+    user_info = {}
+    xp = db_get_xp(user_id)
+    xp = int(xp['xp'])
+    dict_level = db_level()
+    # 1 - ( (xp requise pour le niveau suivant - xp actuelle) / (intervalle d'xp pour le niveau actuel) )* 100
+    for i in dict_level:
+        list_gap = i['lvl_gap'].split(',')
+        if int(list_gap[0]) <= xp < int(list_gap[1]):
+            user_info['lvl_name'] = i['lvl_name']
+            user_info['niveau'] = i['lvl_nb']
+            percent = ((xp - int(list_gap[0])) * 100) / int(i['lvl_xp'])
+            user_info['percent'] = f'{percent} %'
+
+    return user_info
 

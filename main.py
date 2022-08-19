@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from discord.ext import commands
 import random
 import asyncio
-import sqlite3
 
 from db import *  # sqlite execute fonction =)
 from Fighter import create_fighter
@@ -206,14 +205,25 @@ class CommandantShepard(commands.Bot):
             await message.channel.send("```diff\n- hellow\n```", mention_author=True)
 
         elif message.content.startswith('!stats'):
-            fight_stats = db_fight_user_stats(message.author.id)
             user_stats = db_user_stats(message.author.id)
-            await message.channel.send(f"{user_stats['user']}, "
-                                       f"tu as {'0' if user_stats['xp'] is None else user_stats['xp']} points d'xp, "
-                                       f"avec un score à {'0' if user_stats['score'] is None else user_stats['score']} "
-                                       f"points")
-            await message.channel.send(f"{user_stats['user']}, tu as un ratio de {user_stats['fight_win']} victoire "
-                                       f"pour {int(user_stats['fight_win']) + int(user_stats['fight_loose'])} combats")
+            await message.reply(f"tu as {'0' if user_stats['xp'] is None else user_stats['xp']} points d'xp, "
+                                f"avec un score à {'0' if user_stats['score'] is None else user_stats['score']} "
+                                f"points. \n"
+                                f"Tu as un ratio de {user_stats['fight_win']} victoire "
+                                f"pour {int(user_stats['fight_win']) + int(user_stats['fight_loose'])} combats"
+                                , mention_author=True)
+
+        elif message.content.startswith('!list_level'):
+            txt = ''
+            for i in db_level():
+                txt += f"Niveau {i['lvl_nb']} {i['lvl_name']} \n"
+            await message.reply(txt)
+
+        elif message.content.startswith('!my_fight_lvl'):
+            lvl = db_user_level(message.author.id)
+            await message.reply(f"Tu es {lvl['lvl_name']} \n"
+                                f"Niveau actuel : {lvl['niveau']} \n"
+                                f"Tu es a {lvl['percent']} d'expérience.")
 
         # @bot.command()
         # async def test(ctx, arg):
