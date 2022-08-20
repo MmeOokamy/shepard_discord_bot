@@ -29,8 +29,8 @@ class Fighter:
         self.luck = luck
 
     def special(self):
-        return f"name={self.name}, strength={self.strength}, perception={self.perception}, endurance={self.endurance}," \
-               f" charisma={self.charisma}, intelligence={self.intelligence}, agility={self.agility}, luck={self.luck}"
+        return f"name={self.name}, strength={self.strength}, perception={self.perception}, endurance={self.endurance}" \
+               f", charisma={self.charisma}, intelligence={self.intelligence}, agility={self.agility}, luck={self.luck}"
 
     def touch_or_esquive(self, adversary):
         d20 = random.randint(1, 20)
