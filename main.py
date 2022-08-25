@@ -1,21 +1,23 @@
 import os
 import sys
-import discord
 from dotenv import load_dotenv
-from discord.ext import commands
+import discord
+import discord.ext
 import random
 import asyncio
 
 from db import *  # sqlite execute fonction =)
 from Fighter import create_fighter
-from sentence import say_hello
+from sentence import say_hello, brooklyn_99_quotes, quotes
+
+# another discord script
+from fight import FightCommands
 
 load_dotenv()
 
 intents = discord.Intents.default()
-
 intents.members = True
-bot = commands.Bot(command_prefix='?', intents=intents)
+intents.message_content = True
 
 
 async def db_create_user_if_exist(message):
@@ -23,12 +25,12 @@ async def db_create_user_if_exist(message):
     print(response)
 
 
-class CommandantShepard(commands.Bot):
+class CommandantShepard(discord.ext.commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix="!!")
+        super().__init__(command_prefix="$", intents=intents)
 
     async def on_ready(self):
-        print(f"{self.user.name} is ready")
+        print(f"{self.user} is ready")
         print('Database Initiation ....')
         try:
             db_connect()
@@ -37,14 +39,22 @@ class CommandantShepard(commands.Bot):
             print("OS error: {0}".format(err))
             print("Unexpected error:", sys.exc_info()[0])
 
-        print(self.user.id)
-        print(self.user)
+        print(f'ID: {self.user.id})')
         print('------')
 
     async def on_message(self, message):
 
         if "shepard" in message.content.lower():
-            await message.channel.send(content=f"@{message.author.display_name}, {random.choice(say_hello)}")
+            await message.reply(content=f"@{message.author.display_name}, {random.choice(say_hello)}",
+                                mention_author=True)
+
+        elif message.content.startswith('99!'):
+            response = random.choice(brooklyn_99_quotes)
+            await message.channel.send(response)
+
+        elif message.content.startswith('quote quote'):
+            response = random.choice(quotes)
+            await message.channel.send(response)
 
         elif message.content.startswith('!cmd'):
             await message.reply('hello, game(Nombre Mystère), fight(ToiVSGrunt)', mention_author=True)
@@ -224,10 +234,6 @@ class CommandantShepard(commands.Bot):
             await message.reply(f"Tu es {lvl['lvl_name']} \n"
                                 f"Niveau actuel : {lvl['niveau']} \n"
                                 f"Tu es a {lvl['percent']} d'expérience.")
-
-        # @bot.command()
-        # async def test(ctx, arg):
-        #     await ctx.send(arg)
 
 
 shepard = CommandantShepard()

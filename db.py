@@ -36,6 +36,20 @@ def db_create_user(user_id, user):
     return response
 
 
+def db_create_quote(user, quote):
+    c.execute(f'''
+        INSERT INTO quotes ( quote, user_name, since)
+        VALUES ('{quote}', '{user}', DateTime('now'));
+    ''')
+    db.commit()
+
+
+def db_get_quote():
+    return c.execute('''
+        SELECT * FROM quotes;
+    ''').fetchall()
+
+
 def db_fight_add_score(user_id, win_or_loose):
     fight_obj = c.execute(f"SELECT * FROM fight WHERE user_id = '{user_id}'")
     fight = fight_obj.fetchone()
@@ -105,3 +119,11 @@ def db_user_level(user_id):
 
     return user_info
 
+
+def get_enemie_by_lvl(name, user_lvl):
+    return c.execute(f'''
+        SELECT *
+        FROM enemie
+        WHERE enemie_name = '{name.lower()}'
+        AND enemie_lvl = {user_lvl}
+    ''').fetchone()

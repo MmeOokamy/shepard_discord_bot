@@ -21,9 +21,9 @@ class Enemies(Fighter):
         # ajuste special de l'adversaire pour avoir une difficulté croissante
         pass
 
+
 e = {}
 for x in enemies:
-    
     i = Enemies(x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8])
     e[x[0]] = i
     # print(i)
