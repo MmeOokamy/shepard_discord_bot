@@ -2,7 +2,7 @@ import os
 import sys
 from dotenv import load_dotenv
 import discord
-import discord.ext
+from discord.ext import commands
 import random
 import asyncio
 
@@ -10,8 +10,6 @@ from db import *  # sqlite execute fonction =)
 from Fighter import create_fighter
 from sentence import say_hello, brooklyn_99_quotes, quotes
 
-# another discord script
-from fight import FightCommands
 
 load_dotenv()
 
@@ -25,7 +23,7 @@ async def db_create_user_if_exist(message):
     print(response)
 
 
-class CommandantShepard(discord.ext.commands.Bot):
+class CommandantShepard(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix="$", intents=intents)
 
@@ -43,9 +41,15 @@ class CommandantShepard(discord.ext.commands.Bot):
         print('------')
 
     async def on_message(self, message):
-
+        if message.author.id == self.user.id:
+            return
+        
         if "shepard" in message.content.lower():
             await message.reply(content=f"@{message.author.display_name}, {random.choice(say_hello)}",
+                                mention_author=True)
+
+        if "leilou dallas, multipass" in message.content.lower():
+            await message.reply(content=f"oui elle sait ce que c’est qu’un multipass.",
                                 mention_author=True)
 
         elif message.content.startswith('99!'):
@@ -237,5 +241,6 @@ class CommandantShepard(discord.ext.commands.Bot):
 
 
 shepard = CommandantShepard()
+
 
 shepard.run(os.getenv("TOKEN"))

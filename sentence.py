@@ -3,6 +3,19 @@ say_hello = [
     "Je suis occupée...",
     "Nop ...",
     "Je suis AFK !",
+    "C’est à moi que tu parles ? C’est à moi que tu parles ??",
+]
+
+bt_res = [
+    "Maman disait toujours: La vie c’est comme une boîte de chocolats... J'AIME PAS LES NOIRS!!!",
+    "Leilou Dallas, multipass. Muultiipaass",
+    (
+        "Tu vois, le monde se divise en deux catégories: "
+        "ceux qui ont un pistolet chargé et ceux qui creusent."
+        "Toi tu creuses."
+    ),
+
+
 ]
 
 brooklyn_99_quotes = [
