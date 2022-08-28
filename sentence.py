@@ -1,4 +1,4 @@
-say_hello = [
+shepard = [
     "Oui ?",
     "Je suis occupée...",
     "Nop ...",
@@ -6,7 +6,7 @@ say_hello = [
     "C’est à moi que tu parles ? C’est à moi que tu parles ??",
 ]
 
-bt_res = [
+botcommand = [
     "Maman disait toujours: La vie c’est comme une boîte de chocolats... J'AIME PAS LES NOIRS!!!",
     "Leilou Dallas, multipass. Muultiipaass",
     (

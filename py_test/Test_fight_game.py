@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, ".")
 from Fighter import Fighter, create_fighter
-from Enemies import Enemies
+from Shepard_Origin.Enemies import Enemies
 
 
 class TestFighter(unittest.TestCase):

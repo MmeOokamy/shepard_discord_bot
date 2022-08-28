@@ -1,11 +1,12 @@
 import os
+import sys
 import discord
 import random
 from dotenv import load_dotenv
 from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 import datetime
-from sentence import bt_res
+from sentence import botcommand
 
 load_dotenv()
 
@@ -30,9 +31,6 @@ async def on_ready():
 
 @bot.command(name='help_createquote')
 async def add_quote(ctx):
-    def is_correct(m):
-        return m.author == ctx.author and m.content.isdigit()
-
     await ctx.reply("Créer une quote, easy!", mention_author=True)
     await ctx.reply('C\'est simple:   $createquote "le texte que tu veux enregistrer" "nom de la personne",'
                     'ne pas oublier les "" ', mention_author=True)
@@ -75,7 +73,7 @@ async def liste_quote(ctx):
 @bot.event
 async def on_message(message):
     if "bot testeur" in message.content.lower():
-        await message.reply(content=f"@{message.author.display_name}, {random.choice(bt_res)}", mention_author=True)
+        await message.reply(content=f"@{message.author.display_name}, {random.choice(botcommand)}", mention_author=True)
 
 
 bot.run(os.getenv("TESTEURBOT"))
