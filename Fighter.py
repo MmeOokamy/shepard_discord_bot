@@ -11,13 +11,13 @@ class Fighter:
 
     def __init__(self, name, strength, perception, endurance, charisma, intelligence, agility, luck):
         assert name.isalnum(), "Attribut 'name': alphanumeric "
-        assert isinstance(strength, int) and 0 < strength <= 20, "Attribut Strength : entier entre 1 et 20"
-        assert isinstance(perception, int) and 0 < perception <= 20, "Attribut perception : entier entre 1 et 20"
+        assert isinstance(strength, int) and 0 <= strength <= 20, "Attribut Strength : entier entre 1 et 20"
+        assert isinstance(perception, int) and 0 <= perception <= 20, "Attribut perception : entier entre 1 et 20"
         assert isinstance(endurance, int) and 0 <= endurance <= 15, "Attribut Endurance entier entre 7 et 15"
-        assert isinstance(charisma, int) and 0 < charisma <= 20, "Attribut charisma : entier entre 1 et 20"
-        assert isinstance(intelligence, int) and 0 < intelligence <= 20, "Attribut intelligence : entier entre 1 et 20"
-        assert isinstance(agility, int) and 0 < agility <= 20, "Attribut Agility: entier entre 1 et 20"
-        assert isinstance(luck, int) and 0 < luck <= 20, "Attribut Lucky: entier entre 1 et 20"
+        assert isinstance(charisma, int) and 0 <= charisma <= 20, "Attribut charisma : entier entre 1 et 20"
+        assert isinstance(intelligence, int) and 0 <= intelligence <= 20, "Attribut intelligence : entier entre 1 et 20"
+        assert isinstance(agility, int) and 0 <= agility <= 20, "Attribut Agility: entier entre 1 et 20"
+        assert isinstance(luck, int) and 0 <= luck <= 20, "Attribut Lucky: entier entre 1 et 20"
 
         self.name = name
         self.strength = strength  # force
@@ -72,7 +72,7 @@ def create_fighter(player_name):
     # perception 0 < perception <= 20
     p = random.randint(1, 10)
     # endurance 7 <= endurance <= 15
-    e = random.randint(7, 15)
+    e = random.randint(1, 15)
     # charisma 0 < charisma <= 20
     c = random.randint(1, 10)
     # intelligence 0 < intelligence <= 20
@@ -83,3 +83,4 @@ def create_fighter(player_name):
     lu = random.randint(1, 10)
 
     return Fighter(player_name, s, p, e, c, i, a, lu)
+

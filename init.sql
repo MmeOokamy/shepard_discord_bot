@@ -1,15 +1,14 @@
 --DROP TABLE IF EXISTS user;
 --DROP TABLE IF EXISTS quotes;
-
---DROP TABLE IF EXISTS enemie;
---DROP TABLE IF EXISTS level;
---DROP TABLE IF EXISTS fight_stats;
+--DROP TABLE IF EXISTS fight_user;
+--DROP TABLE IF EXISTS fight_level;
+--DROP TABLE IF EXISTS fight_adversary;
 --DROP TABLE IF EXISTS fight_special;
 
 CREATE TABLE IF NOT EXISTS  user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user TEXT,
-    user_id INTEGER NOT NULL UNIQUE,
+    user_id INTEGER UNIQUE NOT NULL,
     score INTEGER DEFAULT 0,
     xp INTEGER DEFAULT 0
 );
@@ -18,53 +17,70 @@ CREATE TABLE IF NOT EXISTS  user (
 CREATE TABLE IF NOT EXISTS quotes(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     quote TEXT,
-    user_name TEXT,
-    since DATETIME
+    user_name TEXT
 );
 
-
-CREATE TABLE IF NOT EXISTS enemie (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    enemie_name TEXT,
-    enemie_lvl INTEGER,
-    enemie_strenght INTEGER,
-    enemie_perception INTEGER,
-    enemie_endurance INTEGER,
-    enemie_charisma INTEGER,
-    enemie_intelligence INTEGER,
-    enemie_agility INTEGER,
-    enemie_luck INTEGER
-);
-
-CREATE TABLE IF NOT EXISTS level (
+CREATE TABLE IF NOT EXISTS fight_level (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     lvl_nb INTEGER,
     lvl_name TEXT,
     lvl_xp INTEGER,
-    lvl_gap TEXT
+    lvl_gap_down INTEGER,
+    lvl_gap_up INTEGER
 );
 
+--INSERT INTO fight_level (lvl_nb, lvl_name, lvl_xp, lvl_gap_down, lvl_gap_up)
+--VALUES
+--(1, 'Inoffensif', 50, 0,50),
+--(2, 'Novice', 100, 50,150),
+--(3, 'Compétent', 300, 150,450),
+--(4, 'Expert', 900, 450,1350),
+--(5, 'Létal', 2700, 1350,4050);
 
---INSERT INTO level
---VALUES (1, 1, 'Inoffensif', 50, '0, 50'),
---(2, 2, 'Novice', 100, '50, 150'),
---(3, 3, 'Compétent', 300, '150, 450'),
---(4, 4, 'Expert', 900, '450, 1350'),
---(5, 5, 'Létal', 2700, '1350,4050');
 
 
-
-CREATE TABLE IF NOT EXISTS fight_stats (
+CREATE TABLE IF NOT EXISTS fight_user (
     user_id INTEGER PRIMARY KEY UNIQUE,
     fight_win INTEGER DEFAULT 0,
     fight_loose INTEGER DEFAULT 0,
+    fight_xp INTEGER DEFAULT 0,
+    fight_lvl INTEGER DEFAULT 1,
+    fight_strength INTEGER DEFAULT 1,
+    fight_perception INTEGER DEFAULT 1,
+    fight_endurance INTEGER DEFAULT 1,
+    fight_charisma INTEGER DEFAULT 1,
+    fight_intelligence INTEGER DEFAULT 1,
+    fight_agility INTEGER DEFAULT 1,
+    fight_luck INTEGER DEFAULT 1,
     FOREIGN KEY (user_id) REFERENCES user (user_id)
 );
 
+CREATE TABLE IF NOT EXISTS fight_adversary (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    adv_name TEXT,
+    adv_race TEXT,
+    adv_lvl TEXT,
+    adv_strength INTEGER,
+    adv_perception INTEGER,
+    adv_endurance INTEGER,
+    adv_charisma INTEGER,
+    adv_intelligence INTEGER,
+    adv_agility INTEGER,
+    adv_luck INTEGER
+);
+
+--INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck)
+--VALUES
+--('Wicket', 'Ewok','0,1,2', -1, -1, -1, -1, -1, -1, -1),
+--('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2),
+--('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0),
+--('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5);
+
+
 CREATE TABLE IF NOT EXISTS fight_special (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    stats_name TEXT,
-    stats_strenght INTEGER,
+    stats_lvl INTEGER,
+    stats_strength INTEGER,
     stats_perception INTEGER,
     stats_endurance INTEGER,
     stats_charisma INTEGER,
@@ -73,14 +89,14 @@ CREATE TABLE IF NOT EXISTS fight_special (
     stats_luck INTEGER
 );
 
--- INSERT INTO fight_special
--- VALUES  (1, '50', 2, 1, 2, 1, 1, 2, 1);
--- (2, '100', 3, 2, 3, 1, 1, 3, 2);
--- (3, '300', 3, 3, 4, 2, 1, 3, 3);
--- (4, '900', 4, 3, 6, 2, 1, 3, 3);
--- (5, '2700', 5, 3, 6, 2, 1, 3, 4);
--- (6, '4500', 5, 3, 6, 2, 1, 4, 4);
--- (7, '6300', 5, 3, 6, 2, 2, 4, 4);
--- (8, '8100', 5, 3, 6, 3, 2, 4, 4);
--- (9, '9900', 6, 3, 6, 3, 2, 4, 4);
--- (10, '11700', 8, 3, 6, 3, 2, 4, 4);
+-- INSERT INTO fight_special (stats_lvl,stats_strength,stats_perception,stats_endurance,stats_charisma,stats_intelligence,stats_agility,stats_luck)
+-- VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
+-- (2, 3, 2, 3, 1, 1, 3, 2),
+-- (3, 3, 3, 4, 2, 1, 3, 3),
+-- (4, 4, 3, 6, 2, 1, 3, 3),
+-- (5, 5, 3, 6, 2, 1, 3, 4),
+-- (6, 5, 3, 6, 2, 1, 4, 4),
+-- (7, 5, 3, 6, 2, 2, 4, 4),
+-- (8, 5, 3, 6, 3, 2, 4, 4),
+-- (9, 6, 3, 6, 3, 2, 4, 4),
+-- (10, 8, 3, 6, 3, 2, 4, 4);
