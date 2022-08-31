@@ -25,18 +25,10 @@ CREATE TABLE IF NOT EXISTS fight_level (
     lvl_nb INTEGER,
     lvl_name TEXT,
     lvl_xp INTEGER,
+    lvl_xp_for_up INTEGER,
     lvl_gap_down INTEGER,
     lvl_gap_up INTEGER
 );
-
---INSERT INTO fight_level (lvl_nb, lvl_name, lvl_xp, lvl_gap_down, lvl_gap_up)
---VALUES
---(1, 'Inoffensif', 50, 0,50),
---(2, 'Novice', 100, 50,150),
---(3, 'Compétent', 300, 150,450),
---(4, 'Expert', 900, 450,1350),
---(5, 'Létal', 2700, 1350,4050);
-
 
 
 CREATE TABLE IF NOT EXISTS fight_user (
@@ -60,21 +52,15 @@ CREATE TABLE IF NOT EXISTS fight_adversary (
     adv_name TEXT,
     adv_race TEXT,
     adv_lvl TEXT,
-    adv_strength INTEGER,
-    adv_perception INTEGER,
-    adv_endurance INTEGER,
-    adv_charisma INTEGER,
-    adv_intelligence INTEGER,
-    adv_agility INTEGER,
-    adv_luck INTEGER
+    adv_strength INTEGER DEFAULT 0,
+    adv_perception INTEGER DEFAULT 0,
+    adv_endurance INTEGER DEFAULT 0,
+    adv_charisma INTEGER DEFAULT 0,
+    adv_intelligence INTEGER DEFAULT 0,
+    adv_agility INTEGER DEFAULT 0,
+    adv_luck INTEGER DEFAULT 0
 );
 
---INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck)
---VALUES
---('Wicket', 'Ewok','0,1,2', -1, -1, -1, -1, -1, -1, -1),
---('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2),
---('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0),
---('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5);
 
 
 CREATE TABLE IF NOT EXISTS fight_special (
@@ -89,6 +75,22 @@ CREATE TABLE IF NOT EXISTS fight_special (
     stats_luck INTEGER
 );
 
+
+--INSERT INTO fight_level (lvl_nb, lvl_name, lvl_xp, lvl_xp_for_up, lvl_gap_down, lvl_gap_up)
+--VALUES
+--(1, 'Inoffensif', 3, 50, 0,50),
+--(2, 'Novice', 3, 100, 50,150),
+--(3, 'Compétent', 3, 300, 150,450),
+--(4, 'Expert', 3, 900, 450,1350),
+--(5, 'Létal', 3, 2700, 1350,4050);
+--
+--INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck)
+--VALUES
+--('Wicket', 'Ewok','0,1,2', 0, 0, 0, 0, 0, 0, 0),
+--('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2),
+--('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0),
+--('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5);
+--
 -- INSERT INTO fight_special (stats_lvl,stats_strength,stats_perception,stats_endurance,stats_charisma,stats_intelligence,stats_agility,stats_luck)
 -- VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
 -- (2, 3, 2, 3, 1, 1, 3, 2),

@@ -70,7 +70,7 @@ def db_fight_get_stats_by_user(user_id):
 
 
 # retourne les info special pour la creation Fighter
-def db_fight_get_user_special(user_id):
+def db_fight_get_user_special(user_id, ):
     return c.execute(f'''
             SELECT u.user AS name,
                 fu.fight_strength AS strength, fu.fight_perception AS perception,
@@ -81,6 +81,35 @@ def db_fight_get_user_special(user_id):
             JOIN fight_user fu ON u.user_id = fu.user_id
             WHERE u.user_id = {user_id}
         ''').fetchone()
+
+
+# ajoute des points dans le special du joueur
+def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0,
+                             luck=0):
+    user_id = int(user_id)
+    # recuper le special initia
+    infos = db_fight_get_user_special(user_id)
+    # addition le spécial
+    s = int(infos['strength']) + strength
+    p = int(infos['perception']) + perception
+    e = int(infos['endurance']) + endurance
+    ch = int(infos['charisma']) + charisma
+    i = int(infos['intelligence']) + intelligence
+    a = int(infos['agility']) + agility
+    lu = int(infos['luck']) + luck
+    # mets a jours le special
+    c.execute(f''' 
+        UPDATE fight_user
+        SET fight_strength={s},
+            fight_perception={p},
+            fight_endurance={e},
+            fight_charisma={ch},
+            fight_intelligence={i},
+            fight_agility={a},
+            fight_luck={lu}
+        WHERE user_id = {user_id}
+    ''')
+    db.commit()
 
 
 # retourne les informations calculer pour la creation de l'objet Fighter
@@ -96,7 +125,7 @@ def db_fight_get_user_special_for_create_fighter(user_id):
     e = 0 if (int(special['stats_endurance']) + int(user['endurance'])) < 0 \
         else (int(special['stats_endurance']) + int(user['endurance']))
 
-    c = 0 if (int(special['stats_charisma']) + int(user['charisma'])) < 0 \
+    ch = 0 if (int(special['stats_charisma']) + int(user['charisma'])) < 0 \
         else (int(special['stats_charisma']) + int(user['charisma']))
 
     i = 0 if (int(special['stats_intelligence']) + int(user['intelligence'])) < 0 \
@@ -105,7 +134,7 @@ def db_fight_get_user_special_for_create_fighter(user_id):
     a = 0 if (int(special['stats_agility']) + int(user['agility'])) < 0 \
         else (int(special['stats_agility']) + int(user['agility']))
 
-    l = 0 if (int(special['stats_luck']) + int(user['luck'])) < 0 \
+    lu = 0 if (int(special['stats_luck']) + int(user['luck'])) < 0 \
         else (int(special['stats_luck']) + int(user['luck']))
 
     user_obj = {
@@ -114,10 +143,10 @@ def db_fight_get_user_special_for_create_fighter(user_id):
         'strength': s,
         'perception': p,
         'endurance': e,
-        'charisma': c,
+        'charisma': ch,
         'intelligence': i,
         'agility': a,
-        'luck': l,
+        'luck': lu,
         'xp': user['xp']
     }
     return user_obj
@@ -133,25 +162,28 @@ def db_fight_get_user_xp_lvl(user_id):
     ''').fetchone()
 
 
-def db_fight_add_score(user_id, win_or_loose, xp=0):
-    fight = c.execute(f"SELECT * FROM fight_user WHERE user_id = '{user_id}'").fetchone()
-    fight_win = int(fight['fight_win'])
-    fight_xp = int(fight['fight_xp'])
-    fight_loose = int(fight['fight_loose'])
+def db_fight_add_score(user_id, win_or_loose=0, xp=0):
+    fight = c.execute(f'''
+        SELECT fight_win as win, fight_loose as loose, fight_xp as xp
+        FROM fight_user
+        WHERE user_id = {user_id}
+    ''').fetchone()
+    o_win = int(fight['win'])
+    o_xp = int(fight['xp'])
+    o_loose = int(fight['loose'])
+    print(f"{o_win}, {o_loose}, {o_xp}")
 
     if int(win_or_loose) == 1:
-        # print('gagné')
-        fight_win += 1
-        fight_xp += xp
+        o_xp += xp
+        o_win += 1
     elif int(win_or_loose) == 0:
-        # print('perdu')
-        fight_loose += 1
+        o_loose += 1
 
     c.execute(f'''
         UPDATE fight_user
-        SET fight_win = {fight_win},
-            fight_loose = {fight_loose},
-            fight_xp = {fight_xp}
+        SET fight_win = {o_win},
+            fight_loose = {o_loose},
+            fight_xp = {o_xp}
         WHERE
             user_id = {user_id}
         LIMIT 1
@@ -180,8 +212,17 @@ def db_fight_get_level_by_gap(user_xp):
     fight_level_all = db_fight_get_level()
     for fl in fight_level_all:
         if fl['lvl_gap_down'] <= user_xp < fl['lvl_gap_up']:
-            print(fl)
             return fl
+
+
+# retourne l'xp gagné par combat en fonction du niveau
+def db_fight_level_get_xp_if_win(lvl):
+    lvl_xp = c.execute(f'''
+        SELECT lvl_xp
+        FROM fight_level
+        WHERE lvl_nb = {lvl}
+    ''').fetchone()
+    return lvl_xp['lvl_xp']
 
 
 # retourne la liste des adv
@@ -206,6 +247,7 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
     adv_select = db_fight_get_adversary_by_id(adv_id)
     user_lvl = db_fight_get_user_xp_lvl(user_id)
     special = db_fight_get_special_by_lvl(user_lvl['lvl'])
+    xp_win = db_fight_level_get_xp_if_win(user_lvl['lvl'])
 
     s = 0 if (int(special['stats_strength']) + int(adv_select['adv_strength'])) < 0 \
         else (int(special['stats_strength']) + int(adv_select['adv_strength']))
@@ -216,7 +258,7 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
     e = 0 if (int(special['stats_endurance']) + int(adv_select['adv_endurance'])) < 0 \
         else (int(special['stats_endurance']) + int(adv_select['adv_endurance']))
 
-    c = 0 if (int(special['stats_charisma']) + int(adv_select['adv_charisma'])) < 0 \
+    ch = 0 if (int(special['stats_charisma']) + int(adv_select['adv_charisma'])) < 0 \
         else (int(special['stats_charisma']) + int(adv_select['adv_charisma']))
 
     i = 0 if (int(special['stats_intelligence']) + int(adv_select['adv_intelligence'])) < 0 \
@@ -225,7 +267,7 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
     a = 0 if (int(special['stats_agility']) + int(adv_select['adv_agility'])) < 0 \
         else (int(special['stats_agility']) + int(adv_select['adv_agility']))
 
-    l = 0 if (int(special['stats_luck']) + int(adv_select['adv_luck'])) < 0 \
+    lu = 0 if (int(special['stats_luck']) + int(adv_select['adv_luck'])) < 0 \
         else (int(special['stats_luck']) + int(adv_select['adv_luck']))
 
     adv = {
@@ -234,11 +276,12 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
         'strength': s,
         'perception': p,
         'endurance': e,
-        'charisma': c,
+        'charisma': ch,
         'intelligence': i,
         'agility': a,
-        'luck': l,
-        'race': adv_select['adv_race']
+        'luck': lu,
+        'race': adv_select['adv_race'],
+        'xp_win': xp_win
     }
     # print(adv)
     return adv

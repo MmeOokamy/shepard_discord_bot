@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 from sentence import brooklyn_99_quotes, botcommand
+from def_utils import *
 
 
 class BotCommand(commands.Cog):
@@ -17,8 +18,10 @@ class BotCommand(commands.Cog):
     @commands.command(name='qhelp', help="Aide pour la création d'une quote")
     async def help_quote(self, ctx):
         await ctx.reply('Créer une quote, easy! \n'
-                        'C\'est simple:  \n!qadd "le texte que tu veux enregistrer" "nom de la personne", ne pas oublier les "" \n'
-                        '!qadd "Appelle moi encore une fois ma princesse et tu vas devoir ramasser tes dents avec tes doigts cassés!" "Commandant Shepard ME1 <3 "\n'
+                        'C\'est simple:  \n!qadd "le texte que tu veux enregistrer" "nom de la personne", '
+                        'ne pas oublier les "" \n '
+                        '!qadd "Appelle moi encore une fois ma princesse et tu vas devoir ramasser tes dents avec tes '
+                        'doigts cassés!" "Commandant Shepard ME1 <3 "\n '
                         'Tu auras un petit message si c\'est bon, pour les voir toutes !lq .', mention_author=True)
 
     @commands.command(name='qadd', help="Ajouter une quote")
@@ -50,14 +53,12 @@ class BotCommand(commands.Cog):
     # reaction en fonction d'un mot
     @commands.Cog.listener()
     async def on_message(self, message):
-        if " bot " in message.content.lower():
-            await message.reply(content=f"@{message.author.display_name}, :o ", mention_author=True)
 
-        elif "superbot" in message.content.lower():
+        if "superbot" in message.content.lower():
             await message.reply(content=f"@{message.author.display_name}, {random.choice(botcommand)}",
                                 mention_author=True)
 
-        elif "99" in message.content.lower():
+        elif "99!" in message.content.lower():
             await message.reply(content=f"{random.choice(brooklyn_99_quotes)}",
                                 mention_author=True)
 

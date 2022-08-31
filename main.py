@@ -7,9 +7,9 @@ import discord
 from discord.ext import commands
 
 from db import *  # sqlite execute fonction =)
+from def_utils import is_me  # fonction utile partout
 
 from dotenv import load_dotenv
-
 load_dotenv()
 
 intents = discord.Intents.default()
@@ -27,13 +27,6 @@ async def load_extensions():
         print("%s has loaded." % cog_file)  # Print a success message.
 
 
-def is_me():
-    def predicate(ctx):
-        return ctx.message.author.id == 283935710858313730
-
-    return commands.check(predicate)
-
-
 async def main():
     async with bot:
         print('---Load Extensions---')
@@ -47,7 +40,7 @@ async def main():
             print(f"Unexpected error: {sys.exc_info()[0]}")
         print('---Start Bot---')
         # TESTEURBOT  -  TOKEN
-        await bot.start(os.getenv("TESTEURBOT"))
+        await bot.start(os.getenv("TOKEN"))
 
 
 @bot.command(name='fait_dodo', hidden=True)
