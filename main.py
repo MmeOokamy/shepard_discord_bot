@@ -10,13 +10,16 @@ from db import *  # sqlite execute fonction =)
 from def_utils import is_me  # fonction utile partout
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+prefix = os.getenv("PREFIX")
+
+bot = commands.Bot(command_prefix=prefix, intents=intents)
 
 cog_files = ['bot_shepard', 'bot_command', 'bot_games']
 
@@ -57,4 +60,5 @@ async def reload_proc(ctx):
     os.system("python main.py")  # don't forget this!
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

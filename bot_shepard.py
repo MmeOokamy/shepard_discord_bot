@@ -36,7 +36,7 @@ class CommandantShepard(commands.Cog):
         if "leilou dallas, multipass" in message.content.lower():
             await message.reply(content="oui elle sait ce que c’est qu’un multipass.", mention_author=True)
 
-    @commands.command(name="fstats", help="Les stats du Fight Club")
+    @commands.command(name="stats", help="Les stats du Fight Club")
     async def fight_stats(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
         await ctx.reply(f"Salut {ctx.author}, \n"
