@@ -10,7 +10,7 @@ class Fighter:
     critical_rate = 0.25
 
     def __init__(self, name, strength, perception, endurance, charisma, intelligence, agility, luck):
-        assert name.isalnum(), "Attribut 'name': alphanumeric "
+        assert isinstance(name, str), "Attribut 'name': alphanumeric "
         assert isinstance(strength, int) and 0 <= strength <= 20, "Attribut Strength : entier entre 1 et 20"
         assert isinstance(perception, int) and 0 <= perception <= 20, "Attribut perception : entier entre 1 et 20"
         assert isinstance(endurance, int) and 0 <= endurance <= 15, "Attribut Endurance entier entre 7 et 15"

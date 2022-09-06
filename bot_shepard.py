@@ -45,6 +45,10 @@ class CommandantShepard(commands.Cog):
                         f"avec {user['win']} victoire sur {int(user['win']) + int(user['loose'])} parties !",
                         mention_author=True)
 
+    # @commands.command(name="rules", help="Les différentes regles du combat")
+    # async def fight_rules(self, ctx):
+    #     # comment cela fonctionne
+
     # Mini Rpg Fight Game
     @commands.command(name="fight", help="Fight Club")
     async def fight_game(self, ctx):
