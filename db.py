@@ -1,6 +1,14 @@
 import os
 import sqlite3
 
+LVL_PTS = {
+    1: 0, 2: 4, 3: 3,
+    4: 4, 5: 3, 6: 4,
+    7: 3, 8: 4, 9: 3,
+    10: 4
+    # LVL_PTS[x]
+}
+
 
 def dict_factory(cursor, row):
     d = {}
@@ -32,6 +40,10 @@ def db_create_user(user_id, user):
              INSERT INTO fight_user (user_id)
              VALUES ('{user_id}');
          ''')
+        c.execute(f'''
+            INSERT INTO fight_user_level (user_id, ul_lvl, ul_pts, ul_used)
+            VALUES ('{user_id}', 1, 0, 1)
+        ''')
         db.commit()
 
 
@@ -171,7 +183,6 @@ def db_fight_add_score(user_id, win_or_loose=0, xp=0):
     o_win = int(fight['win'])
     o_xp = int(fight['xp'])
     o_loose = int(fight['loose'])
-    print(f"{o_win}, {o_loose}, {o_xp}")
 
     if int(win_or_loose) == 1:
         o_xp += xp
@@ -300,3 +311,27 @@ def db_fight_get_special_by_lvl(lvl):
         SELECT * FROM fight_special
         WHERE stats_lvl = {lvl}
     ''').fetchone()
+
+
+# regarde si l'utilisateur passe au niveau sup
+def db_fight_lvl_up_or_not(user_id):
+    xp_lvl = db_fight_get_user_xp_lvl(user_id)
+    print(xp_lvl)
+    if xp_lvl is not None:
+        xp, lvl = xp_lvl['xp'], xp_lvl['lvl']
+        detail_lvl = db_fight_get_level_by_lvl(lvl)
+        if xp in range(detail_lvl['lvl_gap_down'], detail_lvl['lvl_gap_up']):
+            check = False
+        else:
+            check = True
+
+    else:
+        check = 2
+    return check
+
+
+def db_fight_lvl_up_user(user_id):
+    pass
+    # fight_user lvl +=1
+    # retourne le nombre de point a attribuer dans le spécial
+    # fight_user special += lvl_special_pts

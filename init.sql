@@ -1,6 +1,7 @@
 --DROP TABLE IF EXISTS user;
 --DROP TABLE IF EXISTS quotes;
 --DROP TABLE IF EXISTS fight_user;
+--DROP TABLE IF EXISTS fight_user_level;
 --DROP TABLE IF EXISTS fight_level;
 --DROP TABLE IF EXISTS fight_adversary;
 --DROP TABLE IF EXISTS fight_special;
@@ -45,6 +46,14 @@ CREATE TABLE IF NOT EXISTS fight_user (
     fight_agility INTEGER DEFAULT 1,
     fight_luck INTEGER DEFAULT 1,
     FOREIGN KEY (user_id) REFERENCES user (user_id)
+);
+
+CREATE TABLE IF NOT EXISTS fight_user_level(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    ul_lvl INTEGER,
+    ul_pts INTEGER,
+    ul_used BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS fight_adversary (

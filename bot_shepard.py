@@ -8,7 +8,7 @@ from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 from sentence import shepard
 from Fighter import Fighter
-from def_utils import db_create_user_if_exist
+from def_utils import db_create_user_if_exist, special_txt
 
 
 class CommandantShepard(commands.Cog):
@@ -49,15 +49,30 @@ class CommandantShepard(commands.Cog):
     # async def fight_rules(self, ctx):
     #     # comment cela fonctionne
 
+    @commands.command(name="lvl_up", help="gestion des niveau")
+    async def fight_lvl_up(self, ctx):
+        # check le niveau et l'xp de l'user
+        check = db_fight_lvl_up_or_not(ctx.author.id)
+        print(check)
+        if check == 2:
+            await ctx.reply('Il faut combattre pour gagné en expérience', mention_author=True)
+        elif check is False:
+            await ctx.reply('Tout est good', mention_author=True)
+        elif check is True:
+            await ctx.reply('Hey tu as lvl up', mention_author=True)
+        # voi si il faut uper le perso ou non
+
     # Mini Rpg Fight Game
     @commands.command(name="fight", help="Fight Club")
     async def fight_game(self, ctx):
+        user = db_fight_get_stats_by_user(ctx.author.id)
+
         # Fonction utils
         async def status_fighter(player, two):
             await ctx.send(f"{player.name} : {player.pv}")
-            await ctx.send(f"{player.special()}")
+            await ctx.send(f"{special_txt(player)}")
             await ctx.send(f"{two.name} : {two.pv}")
-            await ctx.send(f"{two.special()}")
+            await ctx.send(f"{special_txt(two)}")
 
         async def battle(player, two):
             # player_one attaque ou rate
@@ -120,7 +135,7 @@ class CommandantShepard(commands.Cog):
             # selection de l'adv
             adv_list = db_fight_get_adversary()
             adv_all = ""
-            max_id = 0
+            max_id = 1
             choice_adv = ''
             r_adv = 0
             for adv in adv_list:
@@ -144,7 +159,7 @@ class CommandantShepard(commands.Cog):
             # creation de l'adv en fonction du choix
             if int(choice_adv.content) == 0:
                 r_adv = random.randint(1, max_id)
-            elif int(choice_adv.content) in range(1, max_id, 1):
+            elif int(choice_adv.content) in range(1, max_id):
                 r_adv = int(choice_adv.content)
 
             # Player_two : adversaire
@@ -157,14 +172,15 @@ class CommandantShepard(commands.Cog):
             po = db_fight_get_user_special_for_create_fighter(ctx.author.id)
             player_one = Fighter(po['name'], po['strength'], po['perception'], po['endurance'], po['charisma'],
                                  po['intelligence'], po['agility'], po['luck'])
+            await ctx.reply("C'est parti !", mention_author=True)
+            await ctx.send(f"Bienvenue dans l'arène, en ce jour glorieux, deux adversaires s'affrontent !")
+            await ctx.send(f"Dans le coin IRL : \n"
+                           f":point_left: {player_one.name}, humain de niveau {user['lvl']}, {user['rang']}\n"
+                           f"{special_txt(player_one)}")
 
-            await ctx.send(f"HELLLOOO, Bienvenue pour le combat entre deux poids lourd :imp: \n"
-                           f"Dans le coin rouge: :point_left:{player_one.name} avec {player_two.pv} PV,"
-                           f" {player_one.heal} Potions de soin et une force estimé a {player_one.strength} :muscle: !")
-
-            await ctx.send(f"Dans le coin bleu: :point_right:{player_two.name} avec {player_two.pv} PV,"
-                           f" pas besoin de potion pour un {adv['race']}, la force de ce guerrier est de "
-                           f"{player_two.strength} :muscle: !")
+            await ctx.send(f"Dans le coin Virtuel : \n"
+                           f":point_right: {player_two.name}, {adv['race']} du même niveau.\n"
+                           f"{special_txt(player_two)}")
             await ctx.send("🥊 !! 🥊 FIGHT 🥊 !! 🥊")
 
             # first round
@@ -198,7 +214,6 @@ class CommandantShepard(commands.Cog):
                     await status_fighter(player_one, player_two)
                 elif int(decision.content) == 4:
                     await ctx.send(f"Si tu gagne cette partie tu aura {xp_win} pts d'xp")
-
             else:
                 if not player_one.alive:
                     await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
