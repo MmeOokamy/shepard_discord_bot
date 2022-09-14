@@ -7,8 +7,9 @@ import discord
 from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 from sentence import shepard
-from Fighter import Fighter
-from def_utils import db_create_user_if_exist, special_txt
+from battle.Fighter import Fighter
+from def_utils import db_create_user_if_exist
+from battle.def_utils_battle import special_txt
 
 
 class CommandantShepard(commands.Cog):
@@ -21,20 +22,10 @@ class CommandantShepard(commands.Cog):
         # test 860440689355259906
         channel = self.bot.get_channel(860440689355259906)
         print('Logged in as ---->', self.bot.user)
-        print('ID:', self.bot.user.id)
-        print('------')
-        print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+        # print('ID:', self.bot.user.id)
+        print(f"{self.__class__.__name__} --- OK")
         await channel.send(":sunglasses: I'm back bitches")
         # await channel.send("https://tenor.com/tk8a.gif")  # loool
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        # if "shepard" in message.content.lower():
-        #     await message.reply(content=f"@{message.author.display_name}, {random.choice(shepard)}",
-        #                         mention_author=True)
-
-        if "leilou dallas, multipass" in message.content.lower():
-            await message.reply(content="oui elle sait ce que c’est qu’un multipass.", mention_author=True)
 
     @commands.command(name="stats", help="Les stats du Fight Club")
     async def fight_stats(self, ctx):
@@ -53,7 +44,6 @@ class CommandantShepard(commands.Cog):
     async def fight_lvl_up(self, ctx):
         # check le niveau et l'xp de l'user
         check = db_fight_lvl_up_or_not(ctx.author.id)
-        print(check)
         if check == 2:
             await ctx.reply('Il faut combattre pour gagné en expérience', mention_author=True)
         elif check is False:
@@ -62,8 +52,20 @@ class CommandantShepard(commands.Cog):
             await ctx.reply('Hey tu as lvl up', mention_author=True)
         # voi si il faut uper le perso ou non
 
+    # pour l'attribution des points
+    @commands.command(name="gestion_special", help="gestion du special")
+    async def fight_add_special(self, ctx):
+        check = db_fight_lvl_up_or_not(ctx.author.id)
+        special = db_fight_get_user_special(ctx.author.id)
+        # await ctx.send(f"{gestion_special_txt(special)}")
+        # check = True
+        # if check is True:
+        #     pts = 3
+        #     await ctx.reply(f"Tu as {pts} points a repartir entre tes compétences! \n"
+        #                     f"{special}", mention_author=True)
+
     # Mini Rpg Fight Game
-    @commands.command(name="fight", help="Fight Club")
+    @commands.command(name="battle", help="Fight Club")
     async def fight_game(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
 

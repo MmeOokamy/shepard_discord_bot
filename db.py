@@ -23,7 +23,7 @@ c = db.cursor()
 
 
 def db_connect():
-    with open('init.sql', 'r') as sql_file:
+    with open('sql/init.sql', 'r') as sql_file:
         sql_script = sql_file.read()
     c.executescript(sql_script)
 
@@ -316,7 +316,7 @@ def db_fight_get_special_by_lvl(lvl):
 # regarde si l'utilisateur passe au niveau sup
 def db_fight_lvl_up_or_not(user_id):
     xp_lvl = db_fight_get_user_xp_lvl(user_id)
-    print(xp_lvl)
+    # print(xp_lvl)
     if xp_lvl is not None:
         xp, lvl = xp_lvl['xp'], xp_lvl['lvl']
         detail_lvl = db_fight_get_level_by_lvl(lvl)
@@ -324,7 +324,6 @@ def db_fight_lvl_up_or_not(user_id):
             check = False
         else:
             check = True
-
     else:
         check = 2
     return check

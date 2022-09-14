@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS fight_special (
     stats_luck INTEGER
 );
 
-
+--
 --INSERT INTO fight_level (lvl_nb, lvl_name, lvl_xp, lvl_xp_for_up, lvl_gap_down, lvl_gap_up)
 --VALUES
 --(1, 'Inoffensif', 3, 50, 0,50),

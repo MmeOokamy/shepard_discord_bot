@@ -13,7 +13,7 @@ class BotCommand(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+        print(f"{self.__class__.__name__} --- OK")
 
     @commands.command(name='qhelp', help="Aide pour la création d'une quote")
     async def help_quote(self, ctx):
@@ -57,6 +57,9 @@ class BotCommand(commands.Cog):
         if "superbot" in message.content.lower():
             await message.reply(content=f"@{message.author.display_name}, {random.choice(botcommand)}",
                                 mention_author=True)
+
+        elif "leilou dallas, multipass" in message.content.lower():
+            await message.reply(content="oui elle sait ce que c’est qu’un multipass.", mention_author=True)
 
         elif "99!" in message.content.lower():
             await message.reply(content=f"{random.choice(brooklyn_99_quotes)}",

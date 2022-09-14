@@ -14,7 +14,7 @@ class BotGames(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f"{self.__class__.__name__} Cog has been loaded\n-----")
+        print(f"{self.__class__.__name__} --- OK")
 
     @commands.command(name='nb_magic', help="Devine le nombre secret !")
     async def game_number(self, ctx):

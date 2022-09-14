@@ -20,12 +20,3 @@ def is_me():
 
 async def db_create_user_if_exist(user_id, user_name):
     db_create_user(user_id, user_name)
-
-
-def special_txt(player):
-    return (f"Force : {player.strength} :muscle:, Perception : {player.perception} :eye:, "
-            f"Endurance : {player.endurance} :person_running:, "
-            f"Charisme : {player.charisma} :superhero:, "
-            f"Intelligence : {player.intelligence}:brain:, "
-            f"agilité : {player.agility} :person_doing_cartwheel:, "
-            f"chance : {player.luck}:four_leaf_clover:")
