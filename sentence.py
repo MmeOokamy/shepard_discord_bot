@@ -10,8 +10,8 @@ botcommand = [
     "Maman disait toujours: La vie c’est comme une boîte de chocolats... J'AIME PAS LES NOIRS!!!",
     "Leilou Dallas, multipass. Muultiipaass",
     (
-        "Tu vois, le monde se divise en deux catégories: "
-        "ceux qui ont un pistolet chargé et ceux qui creusent."
+        "Tu vois, le monde se divise en deux catégories: \n"
+        "ceux qui ont un pistolet chargé et ceux qui creusent.\n"
         "Toi tu creuses."
     ),
 
