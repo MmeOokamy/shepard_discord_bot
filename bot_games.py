@@ -2,6 +2,7 @@
 import random
 import discord
 import asyncio
+from discord.ui import Button, View
 from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 from sentence import *
@@ -16,22 +17,6 @@ class BotGames(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
-
-    @commands.command(name='btn', help="btn")
-    async def btn_test(self, ctx: commands.Context):
-        view = Confirm()
-        await ctx.send('Veut-tu continer?', view=view)
-        # Wait for the View to stop listening for input...
-        await view.wait()
-
-        if view.value is None:
-            print('Timed out...')
-        elif view.value:
-            print('Confirmed...')
-        else:
-            print('Cancelled...')
-
-        print(view.value)
 
     @commands.command(name='nb_magic', help="Devine le nombre secret !")
     async def game_number(self, ctx):

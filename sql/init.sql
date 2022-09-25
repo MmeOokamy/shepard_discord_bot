@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS fight_user_level(
 CREATE TABLE IF NOT EXISTS fight_adversary (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     adv_name TEXT,
+    adv_img TEXT,
     adv_race TEXT,
     adv_lvl TEXT,
     adv_strength INTEGER DEFAULT 0,
@@ -93,12 +94,12 @@ CREATE TABLE IF NOT EXISTS fight_special (
 --(4, 'Expert', 3, 900, 450,1350),
 --(5, 'Létal', 3, 2700, 1350,4050);
 --
---INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck)
+--INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck, adv_img)
 --VALUES
---('Wicket', 'Ewok','0,1,2', 0, 0, 0, 0, 0, 0, 0),
---('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2),
---('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0),
---('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5);
+--('Wicket', 'Ewok','0,1,2', 0, 0, 0, 0, 0, 0, 0, 'wicket.png'),
+--('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2, 'flutter.png'),
+--('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0, 'grunt.png'),
+--('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5, 'shepard.png');
 --
 -- INSERT INTO fight_special (stats_lvl,stats_strength,stats_perception,stats_endurance,stats_charisma,stats_intelligence,stats_agility,stats_luck)
 -- VALUES  (1, 2, 1, 2, 1, 1, 2, 1),

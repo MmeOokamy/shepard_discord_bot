@@ -2,8 +2,10 @@ import os
 import discord
 from discord.ext import commands
 
-
 # Define a simple View that gives us a confirmation menu
+from db import db_fight_get_adversary
+
+
 class Confirm(discord.ui.View):
     def __init__(self):
         super().__init__()
@@ -26,3 +28,24 @@ class Confirm(discord.ui.View):
         self.stop()
 
 
+class AdvChoices(discord.ui.View):
+    ADV = db_fight_get_adversary()
+
+    def __init__(self):
+        super().__init__()
+        self.value = None
+        self.label = ""
+
+    @discord.ui.button(label="Numero1", style=discord.ButtonStyle.grey)
+    async def adv_one(self, interaction: discord.Interaction, button: discord.ui.Button, ctx: commands.Context):
+        await interaction.response.send_message("Ton adversaire sera : 1")
+        self.label = "adv['adv_name']"
+        self.value = "adv['id']"
+
+    @discord.ui.button(label="x", style=discord.ButtonStyle.danger)
+    async def adv_one(self, interaction: discord.Interaction, button: discord.ui.Button, ctx: commands.Context):
+        await interaction.response.send_message("Ton adversaire sera : 2")
+        self.label = "adv['adv_name']"
+        self.value = "adv['id']"
+        await ctx.edit_message("adv['adv_name']")
+        self.stop()
