@@ -19,7 +19,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-cog_files = ['bot_shepard', 'bot_command', 'bot_games']
+cog_files = ['bot_shepard', 'bot_battle', 'bot_command', 'bot_games']
 
 
 async def load_extensions():

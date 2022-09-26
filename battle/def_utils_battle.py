@@ -2,8 +2,7 @@
 import discord
 from discord.ext import commands
 
-from db import db_fight_get_adversary_by_id_for_create, db_fight_get_user_special_for_create_fighter, \
-    db_fight_get_adversary
+from db import *
 
 
 def special_txt(player):
@@ -13,6 +12,15 @@ def special_txt(player):
             f"Intelligence : {player.intelligence}:brain:, "
             f"Agilité : {player.agility} :person_doing_cartwheel:, "
             f"Chance : {player.luck}:four_leaf_clover:")
+
+
+def embed_stats(user_id):
+    user = db_fight_get_stats_by_user(user_id)
+    embed = discord.Embed(description=f"", color=discord.Colour.random())
+    embed.set_author(name=f"")
+    embed.add_field(name="S.P.E.C.I.A.L",
+                    value=f"")
+    return embed
 
 
 def embed_one(player, color, race):

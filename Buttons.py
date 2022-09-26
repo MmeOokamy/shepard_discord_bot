@@ -29,8 +29,6 @@ class Confirm(discord.ui.View):
 
 
 class AdvChoices(discord.ui.View):
-    ADV = db_fight_get_adversary()
-
     def __init__(self):
         super().__init__()
         self.value = None

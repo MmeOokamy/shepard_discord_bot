@@ -1,11 +1,11 @@
---DROP TABLE IF EXISTS user;
---DROP TABLE IF EXISTS quotes;
---DROP TABLE IF EXISTS fight_user;
---DROP TABLE IF EXISTS fight_user_level;
---DROP TABLE IF EXISTS fight_level;
---DROP TABLE IF EXISTS fight_adversary;
---DROP TABLE IF EXISTS fight_special;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS quotes;
+DROP TABLE IF EXISTS fight_level;
+DROP TABLE IF EXISTS fight_player;
+DROP TABLE IF EXISTS fight_adversary;
+DROP TABLE IF EXISTS fight_special;
 
+-- USER TABLE
 CREATE TABLE IF NOT EXISTS  user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user TEXT,
@@ -14,101 +14,88 @@ CREATE TABLE IF NOT EXISTS  user (
     xp INTEGER DEFAULT 0
 );
 
-
+-- QUOTES TABLE
 CREATE TABLE IF NOT EXISTS quotes(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     quote TEXT,
     user_name TEXT
 );
 
+
+-- FIGHT / BATTLE TABLES
 CREATE TABLE IF NOT EXISTS fight_level (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    lvl_nb INTEGER,
-    lvl_name TEXT,
-    lvl_xp INTEGER,
-    lvl_xp_for_up INTEGER,
-    lvl_gap_down INTEGER,
-    lvl_gap_up INTEGER
+    lvl INTEGER,
+    name TEXT,
+    pts INTEGER,
+    total_xp INTEGER
 );
 
+INSERT INTO fight_level (lvl, name, pts, total_xp)
+VALUES
+(1, 'Inoffensif', 3, 50),
+(2, 'Novice', 4, 100),
+(3, 'Compétent', 5, 300),
+(4, 'Expert', 6, 900),
+(5, 'Létal', 8, 2700);
 
-CREATE TABLE IF NOT EXISTS fight_user (
+CREATE TABLE IF NOT EXISTS fight_player (
     user_id INTEGER PRIMARY KEY UNIQUE,
-    fight_win INTEGER DEFAULT 0,
-    fight_loose INTEGER DEFAULT 0,
-    fight_xp INTEGER DEFAULT 0,
-    fight_lvl INTEGER DEFAULT 1,
-    fight_strength INTEGER DEFAULT 1,
-    fight_perception INTEGER DEFAULT 1,
-    fight_endurance INTEGER DEFAULT 1,
-    fight_charisma INTEGER DEFAULT 1,
-    fight_intelligence INTEGER DEFAULT 1,
-    fight_agility INTEGER DEFAULT 1,
-    fight_luck INTEGER DEFAULT 1,
+    win INTEGER DEFAULT 0,
+    loose INTEGER DEFAULT 0,
+    xp INTEGER DEFAULT 0,
+    lvl INTEGER DEFAULT 1,
+    strength INTEGER DEFAULT 1,
+    perception INTEGER DEFAULT 1,
+    endurance INTEGER DEFAULT 1,
+    charisma INTEGER DEFAULT 1,
+    intelligence INTEGER DEFAULT 1,
+    agility INTEGER DEFAULT 1,
+    luck INTEGER DEFAULT 1,
     FOREIGN KEY (user_id) REFERENCES user (user_id)
-);
-
-CREATE TABLE IF NOT EXISTS fight_user_level(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    ul_lvl INTEGER,
-    ul_pts INTEGER,
-    ul_used BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS fight_adversary (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    adv_name TEXT,
-    adv_img TEXT,
-    adv_race TEXT,
-    adv_lvl TEXT,
-    adv_strength INTEGER DEFAULT 0,
-    adv_perception INTEGER DEFAULT 0,
-    adv_endurance INTEGER DEFAULT 0,
-    adv_charisma INTEGER DEFAULT 0,
-    adv_intelligence INTEGER DEFAULT 0,
-    adv_agility INTEGER DEFAULT 0,
-    adv_luck INTEGER DEFAULT 0
+    name TEXT,
+    img TEXT,
+    race TEXT,
+    strength INTEGER DEFAULT 0,
+    perception INTEGER DEFAULT 0,
+    endurance INTEGER DEFAULT 0,
+    charisma INTEGER DEFAULT 0,
+    intelligence INTEGER DEFAULT 0,
+    agility INTEGER DEFAULT 0,
+    luck INTEGER DEFAULT 0
 );
 
-
+INSERT INTO fight_adversary (name, race, strength, perception, endurance, charisma, intelligence, agility, luck, img)
+VALUES
+('Wicket', 'Ewok', 0, 0, 0, 0, 0, 0, 0, 'wicket.png'),
+('Fluttershy', 'Pegase', 2, 2, 2, 2, 2, 2, 2, 'flutter.png'),
+('Grunt', 'Krogan', 2, 0, 2, 0, -1, -1, 0, 'grunt.png'),
+('Commandant Shepard', 'Shepard', 5, 5, 5, 5, 5, 5, 5, 'shepard.png');
 
 CREATE TABLE IF NOT EXISTS fight_special (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    stats_lvl INTEGER,
-    stats_strength INTEGER,
-    stats_perception INTEGER,
-    stats_endurance INTEGER,
-    stats_charisma INTEGER,
-    stats_intelligence INTEGER,
-    stats_agility INTEGER,
-    stats_luck INTEGER
+    lvl INTEGER,
+    strength INTEGER,
+    perception INTEGER,
+    endurance INTEGER,
+    charisma INTEGER,
+    intelligence INTEGER,
+    agility INTEGER,
+    luck INTEGER
 );
 
---
---INSERT INTO fight_level (lvl_nb, lvl_name, lvl_xp, lvl_xp_for_up, lvl_gap_down, lvl_gap_up)
---VALUES
---(1, 'Inoffensif', 3, 50, 0,50),
---(2, 'Novice', 3, 100, 50,150),
---(3, 'Compétent', 3, 300, 150,450),
---(4, 'Expert', 3, 900, 450,1350),
---(5, 'Létal', 3, 2700, 1350,4050);
---
---INSERT INTO fight_adversary (adv_name, adv_race, adv_lvl, adv_strength, adv_perception, adv_endurance, adv_charisma, adv_intelligence, adv_agility, adv_luck, adv_img)
---VALUES
---('Wicket', 'Ewok','0,1,2', 0, 0, 0, 0, 0, 0, 0, 'wicket.png'),
---('Fluttershy', 'Pegase','0,1,2', 2, 2, 2, 2, 2, 2, 2, 'flutter.png'),
---('Grunt', 'Krogan','1,2,3', 2, 0, 2, 0, -1, -1, 0, 'grunt.png'),
---('Commandant Shepard', 'Shepard','9,10', 5, 5, 5, 5, 5, 5, 5, 'shepard.png');
---
--- INSERT INTO fight_special (stats_lvl,stats_strength,stats_perception,stats_endurance,stats_charisma,stats_intelligence,stats_agility,stats_luck)
--- VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
--- (2, 3, 2, 3, 1, 1, 3, 2),
--- (3, 3, 3, 4, 2, 1, 3, 3),
--- (4, 4, 3, 6, 2, 1, 3, 3),
--- (5, 5, 3, 6, 2, 1, 3, 4),
--- (6, 5, 3, 6, 2, 1, 4, 4),
--- (7, 5, 3, 6, 2, 2, 4, 4),
--- (8, 5, 3, 6, 3, 2, 4, 4),
--- (9, 6, 3, 6, 3, 2, 4, 4),
--- (10, 8, 3, 6, 3, 2, 4, 4);
+INSERT INTO fight_special (lvl, strength, perception, endurance, charisma, intelligence, agility, luck)
+VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
+(2, 3, 2, 3, 1, 1, 3, 2),
+(3, 3, 3, 4, 2, 1, 3, 3),
+(4, 4, 3, 6, 2, 1, 3, 3),
+(5, 5, 3, 6, 2, 1, 3, 4),
+(6, 5, 3, 6, 2, 1, 4, 4),
+(7, 5, 3, 6, 2, 2, 4, 4),
+(8, 5, 3, 6, 3, 2, 4, 4),
+(9, 6, 3, 6, 3, 2, 4, 4),
+(10, 8, 3, 6, 3, 2, 4, 4);

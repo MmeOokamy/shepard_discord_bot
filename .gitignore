@@ -5,3 +5,4 @@ bot-2.0-env/
 app.py
 .idea
 __pycache__
+shepard.db
