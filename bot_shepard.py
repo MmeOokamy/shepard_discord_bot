@@ -1,7 +1,10 @@
 # coding: utf-8
+import discord
+from discord.ui import View, Button
 from discord.ext import commands
 from battle.battle_buttons import *
 from battle.def_utils_battle import *
+from def_utils import user_exist
 
 
 class CommandantShepard(commands.Cog):
@@ -20,6 +23,7 @@ class CommandantShepard(commands.Cog):
         # await channel.send("https://tenor.com/tk8a.gif")  # loool
 
     @commands.command(name="stats", help="Les stats du Fight Club")
+    @user_exist()
     async def fight_stats(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
         await ctx.reply(f"Salut {ctx.author}, \n"
@@ -29,19 +33,31 @@ class CommandantShepard(commands.Cog):
                         mention_author=True)
 
     @commands.command(name="menu", help="Le menu")
+    @user_exist()
     async def fight_menu(self, ctx):
         view = FightMenu(ctx)
         await ctx.reply('Quelle action fais-tu ?', view=view, mention_author=True)
 
     # carte des adversaires
-    @commands.command(name="adversaires", help="Details des adversaires")
+    @commands.command(name="adv", help="Details des adversaires")
+    @user_exist()
     async def fight_adv_embed(self, ctx):
-        e = embed_adv(ctx)
+        e = embed_advs(ctx)
         files, embeds = e['files'], e['embeds']
+        await ctx.send(files=files, embeds=embeds, delete_after=40)
+
+    @commands.command(name="btn",hidden=True)
+    @user_exist()
+    async def fight_adv_btn(self, ctx):
+        # advs = db_fight_get_adversary()
+
         view = FightAdversary(ctx)
-        await ctx.send(files=files, embeds=embeds, view=view, delete_after=40)
+        await ctx.send('Choisi ton adversaire !', view=view)
         await view.wait()
         print(view.value)
+        e = embed_adv(ctx, view.value)
+        file, embed = e['file'], e['embed']
+        await ctx.send(file=file, embed=embed)
 
 
 async def setup(bot):

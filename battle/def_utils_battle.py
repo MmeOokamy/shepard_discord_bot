@@ -49,19 +49,61 @@ def embed_atk(step, atk_a, atk_b, rip_a, rip_b, result):
     return embed
 
 
-def embed_adv(ctx):
+def embed_user(ctx):
+    special = db_fight_get_user_special_for_create_fighter(ctx.author.id)
+    xlw = db_fight_get_user_xp_lvl(ctx.author.id)
+    avatar = ctx.author.display_avatar
+    embed = discord.Embed(description=f">>> Niv.{xlw['lvl']}/Vic.{xlw['win']}/Exp.{xlw['xp']}", color=0xe67e22)
+    embed.set_author(name=ctx.author.display_name, icon_url=avatar)
+    embed.set_thumbnail(url=avatar)
+    embed.add_field(name="S.P.E.C.I.A.L",
+                    value=f"{special['strength']} :muscle: | "
+                          f"{special['perception']} :eye: | "
+                          f"{special['endurance']} :person_running: | "
+                          f"{special['charisma']} :superhero: | "
+                          f"{special['intelligence']} :brain: | "
+                          f"{special['agility']} :person_doing_cartwheel: | "
+                          f"{special['luck']} :four_leaf_clover:")
+    return embed
+
+
+def embed_adv(ctx, adv_id):
+    adv = db_fight_get_adversary_by_id(adv_id)
+    colors = ('', 0x1abc9c, 0xe91e63, 0xf1c40f, 0xe74c3c)
+    special = db_fight_get_adversary_by_id_for_create(adv['id'], ctx.author.id)
+    file = discord.File(f"/home/ookamy/Dev/shepard_discord_bot/battle/img/{adv['img']}", filename=adv['img'])
+    img = f"attachment://{adv['img']}"
+    embed = discord.Embed(description=f">>> {special['pts']} pts / victoire", color=colors[adv['id']])
+    embed.set_author(name=f"{adv['name']} ({adv['race']})", icon_url=f"{img}")
+    embed.set_thumbnail(url=img)
+    embed.add_field(name="S.P.E.C.I.A.L",
+                    value=f"{special['strength']} :muscle: | "
+                          f"{special['perception']} :eye: | "
+                          f"{special['endurance']} :person_running: | "
+                          f"{special['charisma']} :superhero: | "
+                          f"{special['intelligence']} :brain: | "
+                          f"{special['agility']} :person_doing_cartwheel: | "
+                          f"{special['luck']} :four_leaf_clover:")
+
+    ef = {
+        "file": file,
+        "embed": embed
+    }
+    return ef
+
+
+def embed_advs(ctx):
     adv_list = db_fight_get_adversary()
     embeds = []
     files = []
     colors = ('', 0x1abc9c, 0xe91e63, 0xf1c40f, 0xe74c3c)
     for adv in adv_list:
         special = db_fight_get_adversary_by_id_for_create(adv['id'], ctx.author.id)
-        file = discord.File(f"/home/ookamy/Dev/shepard_discord_bot/battle/img/{adv['adv_img']}",
-                            filename=adv['adv_img'])
+        file = discord.File(f"/home/ookamy/Dev/shepard_discord_bot/battle/img/{adv['img']}", filename=adv['img'])
         files.append(file)
-        img = f"attachment://{adv['adv_img']}"
-        embed = discord.Embed(description=f"{special['xp_win']} pts / victoire", color=colors[adv['id']])
-        embed.set_author(name=f"{adv['adv_name']} ({adv['adv_race']})", icon_url=f"{img}")
+        img = f"attachment://{adv['img']}"
+        embed = discord.Embed(description=f">>> {special['pts']} pts / victoire", color=colors[adv['id']])
+        embed.set_author(name=f"{adv['name']} ({adv['race']})", icon_url=f"{img}")
         embed.set_thumbnail(url=img)
         embed.add_field(name="S.P.E.C.I.A.L",
                         value=f"{special['strength']} :muscle: | "

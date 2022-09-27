@@ -6,8 +6,8 @@ import random
 import discord
 from discord.ext import commands
 from battle.Fighter import Fighter
-from def_utils import db_create_user_if_exist
-from battle.def_utils_battle import special_txt, embed_one, embed_atk, embed_adv
+from def_utils import user_exist
+from battle.def_utils_battle import special_txt, embed_one, embed_atk, embed_advs, embed_user
 from battle.battle_buttons import *
 
 
@@ -21,6 +21,7 @@ class BotBattle(commands.Cog):
 
     # Mini Rpg Fight Game
     @commands.command(name="battle", help="Fight Club")
+    @user_exist()
     async def fight_game(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
 
@@ -71,9 +72,7 @@ class BotBattle(commands.Cog):
             await ctx.send(f"La potion de vitalité lui donne {pv_potion} de pv en plus")
             await ctx.send(f"{player.name} a maintenant {player.pv} pv ...")
 
-        # verif existence user + false create data
         guess = ''
-        await db_create_user_if_exist(ctx.author.id, ctx.author.name)
         # propose le combat
         await ctx.reply('Un petit combat ? \n 1-Oui ou 2-Non ?', mention_author=True)
 
@@ -181,6 +180,7 @@ class BotBattle(commands.Cog):
 
     # Mini Rpg Fight Game
     @commands.command(name="battest", help="Fight Club Develop")
+    @user_exist()
     async def fight_game_test(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
 
@@ -246,7 +246,6 @@ class BotBattle(commands.Cog):
 
         async def healer(player):
             pv_potion = player.take_care_of_yourself()
-
             embed = discord.Embed(title="Utilise Soin", color=discord.Colour.random())
             file = discord.File(f"/home/ookamy/Dev/shepard_discord_bot/battle/img/potion.png", filename="potion.png")
             embed.set_author(name=player.name, icon_url="attachment://potion.png")
@@ -255,89 +254,88 @@ class BotBattle(commands.Cog):
             embed.set_footer(text=f"{player.name} a maintenant {player.pv} pv ...")
             await ctx.send(file=file, embed=embed)
 
-        # verif existence user + false create data
-        await db_create_user_if_exist(ctx.author.id, ctx.author.name)
-
         # propose le combat
         view_fs = FightStart(ctx)
         await ctx.send('Un petit combat ??', view=view_fs, delete_after=20, mention_author=True)
         await view_fs.wait()
 
         if view_fs.value is True:
-            # selection de l'adv
-            adv_list = db_fight_get_adversary()
-            adv_all = ""
-            max_id = 1
-            choice_adv = ''
-            r_adv = 0
-            e = embed_adv(ctx)
+            # selection de l'adversaire
+            e = embed_advs(ctx)
             files, embeds = e['files'], e['embeds']
-            # await ctx.send("Choisi ton adversaire : ", )
-            await ctx.send(files=files, embeds=embeds, delete_after=20)
+            await ctx.send(files=files, embeds=embeds, delete_after=10)
+            view = FightAdversary(ctx)
+            await ctx.send('Choisi ton adversaire !', view=view)
+            await view.wait()
+            # print(view.value)
+            adv_id = int(view.value)
 
-            # await ctx.reply(f"0 : Aléatoire \n"
-            #                 f" {adv_all}"
-            #                 , mention_author=True)
-            #
-            # # en fonction de la reponse on verifi que l'adv est entre 0 - id_max
-            # def is_correct(m):
-            #     return m.author == ctx.author and m.content.isdigit() and 0 <= int(m.content) <= max_id
-            #
-            # try:
-            #     choice_adv = await self.bot.wait_for('message', check=is_correct, timeout=10.0)
-            # except asyncio.TimeoutError:
-            #     await ctx.reply("Dommage tu es lent :worried:, j'me casse!", mention_author=True)
-            #
-            # # creation de l'adv en fonction du choix
-            # if int(choice_adv.content) == 0:
-            #     r_adv = random.randint(1, max_id)
-            # elif int(choice_adv.content) in range(1, max_id):
-            #     r_adv = int(choice_adv.content)
-            #
-            # # Player_two : adversaire
-            # adv = db_fight_get_adversary_by_id_for_create(r_adv, ctx.author.id)
-            # xp_win = adv['xp_win']
-            # player_two = Fighter(adv['name'], adv['strength'], adv['perception'], adv['endurance'], adv['charisma'],
-            #                      adv['intelligence'], adv['agility'], adv['luck'])
-            #
-            # # Player_one : user
-            # po = db_fight_get_user_special_for_create_fighter(ctx.author.id)
-            # player_one = Fighter(po['name'], po['strength'], po['perception'], po['endurance'], po['charisma'],
-            #                      po['intelligence'], po['agility'], po['luck'])
-            #
-            # await ctx.send(f"**Bienvenue dans l'arène, en ce jour glorieux, deux adversaires s'affrontent !**")
-            # await ctx.send(f"Dans le coin IRL : \n", embed=embed_one(player_one, 0xe67e22, 'Humain'))
-            # await ctx.send(f"Dans le coin Virtuel : \n", embed=embed_one(player_two, 0x3498db, adv['race']))
-            #
-            # await ctx.send("🥊 !! 🥊 FIGHT 🥊 !! 🥊")
-            #
-            # # first round
-            # await battle(player_one, player_two)
-            #
-            # while player_one.alive and player_two.alive:
-            #     choice = ''
-            #     view_fc = FightChoices(ctx)
-            #     await ctx.reply('Quelle action fais-tu ?', view=view_fc, delete_after=15, mention_author=True)
-            #     await view_fc.wait()
-            #     choice = view_fc.value
-            #     print(choice)
-            #     # choix au combat
-            #     if int(choice) == 1:
-            #         await battle(player_one, player_two)
-            #     elif int(choice) == 2:
-            #         if player_one.heal != 0:
-            #             await healer(player_one)
-            #         else:
-            #             await ctx.send("Tu n'as plus de potion !")
-            #     elif int(choice) == 3:
-            #         await status_fighter(player_one, player_two)
-            # else:
-            #     if not player_one.alive:
-            #         await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
-            #         db_fight_add_score(ctx.author.id, 0, xp_win)
-            #     elif not player_two.alive:
-            #         await ctx.send(f"{player_one.name} gagne contre {player_two.name} :muscle:!")
-            #         db_fight_add_score(ctx.author.id, 1)
+            await ctx.send(f"**Bienvenue dans l'arène, en ce jour glorieux, deux adversaires s'affrontent !**")
+            # Player_one : user
+            po = db_fight_get_user_special_for_create_fighter(ctx.author.id)
+            # print(po)
+            player_one = Fighter(po['name'], po['strength'], po['perception'], po['endurance'], po['charisma'],
+                                 po['intelligence'], po['agility'], po['luck'])
+            # print(player_one)
+
+            # Player_two : adversaire
+            if adv_id == 0:
+                adv_id = random.randint(1, 4)
+            e = embed_adv(ctx, adv_id)
+            file, embed = e['file'], e['embed']
+            adv = db_fight_get_adversary_by_id_for_create(adv_id, ctx.author.id)
+            # {'name': 'Grunt', 'lvl': 1, 'strength': 4, 'perception': 1, 'endurance': 4, 'charisma': 1,
+            # 'intelligence': 0, 'agility': 1, 'luck': 1, 'race': 'Krogan', 'pts': 3}
+            pts = int(adv['pts'])
+            player_two = Fighter(adv['name'], adv['strength'], adv['perception'], adv['endurance'], adv['charisma'],
+                                 adv['intelligence'], adv['agility'], adv['luck'])
+
+            # Embed des combattants
+            await ctx.send(f"Dans le coin IRL : \n", embed=embed_user(ctx))
+            await ctx.send(f"Dans le coin Virtuel : \n", file=file, embed=embed)
+            await ctx.send("**🥊 !! 🥊 FIGHT 🥊 !! 🥊**")
+
+            # first round
+            await battle(player_one, player_two)
+            step += 1
+
+            while player_one.alive and player_two.alive:
+                choice = ''
+                view_fc = FightChoices(ctx)
+                await ctx.reply('Quelle action fais-tu ?', view=view_fc,  mention_author=True)
+                await view_fc.wait()
+                choice = view_fc.value
+                # choix au combat
+                if int(choice) == 1:
+                    await battle(player_one, player_two)
+                    step += 1
+                elif int(choice) == 2:
+                    if player_one.heal != 0:
+                        await healer(player_one)
+                    else:
+                        await ctx.send("Tu n'as plus de potion !")
+                elif int(choice) == 3:
+                    await status_fighter(player_one, player_two)
+            else:
+                # Player one mort
+                if not player_one.alive:
+                    db_fight_loose(ctx.author.id)
+                    await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
+                # Player one win
+                elif not player_two.alive:
+                    db_fight_win(ctx.author.id, pts)
+                    await ctx.send(f"{player_one.name} gagne contre {player_two.name} :muscle:!")
+
+    @commands.command(name="win", help="dev")
+    @user_exist()
+    async def fight_win_test(self, ctx):
+        # quand gagne +xp +win chek l'xp si =< palier alors attribution des pts
+        pts = 5
+        # db_fight_win(ctx.author.id, pts)
+        po = db_fight_get_special_total(ctx.author.id, adv_id=0)
+        sh = db_fight_get_special_total(ctx.author.id, adv_id=4)
+        await ctx.send(f"{po}")
+        await ctx.send(f"{sh}")
 
 
 async def setup(bot):

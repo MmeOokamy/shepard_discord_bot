@@ -2,6 +2,8 @@ import os
 import discord
 from discord.ui import View, Button
 from discord.ext import commands
+
+from battle.def_utils_battle import embed_adv
 from db import *  # sqlite execute fonction =)
 
 
@@ -76,17 +78,44 @@ class FightStart(discord.ui.View):
             return True
 
 
-class FightAdversary(View):
-
+class FightAdversary(discord.ui.View):
     def __init__(self, ctx):
         super().__init__()
+        self.value = None
         self.ctx = ctx
-        self.adv_list = db_fight_get_adversary()
-        for adv in self.adv_list:
-            self.add_item(Button(label=f"{adv['adv_name']}", custom_id=f"{adv['id']}"))
 
-    async def callback(self, interaction):
-        await interaction.response.edit_message(content=f"tu as choisi", view=None)
+    emoji = ('❓', '🧸', '👿', '⚔', '☣')
+    advs = db_fight_get_adversary()
+
+    @discord.ui.button(label=f"Aléatoire", style=discord.ButtonStyle.blurple, emoji=emoji[0])
+    async def adv_random(self, interaction, button):
+        await interaction.response.edit_message(content=f"Merci d'accueillir :  {self.emoji[0]}", view=None)
+        self.value = 0
+        self.stop()
+
+    @discord.ui.button(label=f"{advs[0]['name']}", style=discord.ButtonStyle.blurple, emoji=emoji[1])
+    async def adv_one(self, interaction, button):
+        await interaction.response.edit_message(content=f"Merci d'accueillir :  {self.emoji[1]}", view=None)
+        self.value = 1
+        self.stop()
+
+    @discord.ui.button(label=f"{advs[1]['name']}", style=discord.ButtonStyle.gray, emoji=emoji[2])
+    async def adv_two(self, interaction, button):
+        await interaction.response.edit_message(content=f"Merci d'accueillir :  {self.emoji[2]}", view=None)
+        self.value = 2
+        self.stop()
+
+    @discord.ui.button(label=f"{advs[2]['name']}", style=discord.ButtonStyle.green, emoji=emoji[3])
+    async def adv_tree(self, interaction, button):
+        await interaction.response.edit_message(content=f"Merci d'accueillir :  {self.emoji[3]}", view=None)
+        self.value = 3
+        self.stop()
+
+    @discord.ui.button(label=f"{advs[3]['name']}", style=discord.ButtonStyle.red, emoji=emoji[4])
+    async def adv_four(self, interaction, button):
+        await interaction.response.edit_message(content=f"Merci d'accueillir :  {self.emoji[4]}", view=None)
+        self.value = 4
+        self.stop()
 
     async def interaction_check(self, interaction) -> bool:
         if interaction.user != self.ctx.author:
@@ -104,20 +133,19 @@ class FightChoices(discord.ui.View):
 
     @discord.ui.button(label='Attaquer', style=discord.ButtonStyle.green, emoji="⚔", custom_id='1')
     async def atk(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # await interaction.response.send_message('Too bad', ephemeral=True)
-        await interaction.response.edit_message(content='Attaquer !!')
+        await interaction.response.edit_message(content='Attaquer !!', view=None)
         self.value = 1
         self.stop()
 
     @discord.ui.button(label='Heal', style=discord.ButtonStyle.green, emoji="🧪", custom_id='2')
     async def heal(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # await interaction.response.send_message('Too bad', ephemeral=True)
+        await interaction.response.edit_message(content='Une petite boisson fraîche?!!', view=None)
         self.value = 2
         self.stop()
 
-    @discord.ui.button(label='Etats', style=discord.ButtonStyle.green, emoji="🧬", custom_id='3')
+    @discord.ui.button(label='Stats', style=discord.ButtonStyle.green, emoji="🧬", custom_id='3')
     async def stats(self, interaction: discord.Interaction, button: discord.ui.Button):
-        # await interaction.response.send_message('Too bad', ephemeral=True)
+        await interaction.response.edit_message(content='🧮', view=None)
         self.value = 3
         self.stop()
 

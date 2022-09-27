@@ -1,9 +1,9 @@
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS quotes;
-DROP TABLE IF EXISTS fight_level;
-DROP TABLE IF EXISTS fight_player;
-DROP TABLE IF EXISTS fight_adversary;
-DROP TABLE IF EXISTS fight_special;
+--DROP TABLE IF EXISTS user;
+--DROP TABLE IF EXISTS quotes;
+--DROP TABLE IF EXISTS fight_level;
+--DROP TABLE IF EXISTS fight_player;
+--DROP TABLE IF EXISTS fight_adversary;
+--DROP TABLE IF EXISTS fight_special;
 
 -- USER TABLE
 CREATE TABLE IF NOT EXISTS  user (
@@ -31,13 +31,13 @@ CREATE TABLE IF NOT EXISTS fight_level (
     total_xp INTEGER
 );
 
-INSERT INTO fight_level (lvl, name, pts, total_xp)
-VALUES
-(1, 'Inoffensif', 3, 50),
-(2, 'Novice', 4, 100),
-(3, 'Compétent', 5, 300),
-(4, 'Expert', 6, 900),
-(5, 'Létal', 8, 2700);
+--INSERT INTO fight_level (lvl, name, pts, total_xp)
+--VALUES
+--(1, 'Inoffensif', 3, 50),
+--(2, 'Novice', 4, 100),
+--(3, 'Compétent', 5, 300),
+--(4, 'Expert', 6, 900),
+--(5, 'Létal', 8, 2700);
 
 CREATE TABLE IF NOT EXISTS fight_player (
     user_id INTEGER PRIMARY KEY UNIQUE,
@@ -69,12 +69,12 @@ CREATE TABLE IF NOT EXISTS fight_adversary (
     luck INTEGER DEFAULT 0
 );
 
-INSERT INTO fight_adversary (name, race, strength, perception, endurance, charisma, intelligence, agility, luck, img)
-VALUES
-('Wicket', 'Ewok', 0, 0, 0, 0, 0, 0, 0, 'wicket.png'),
-('Fluttershy', 'Pegase', 2, 2, 2, 2, 2, 2, 2, 'flutter.png'),
-('Grunt', 'Krogan', 2, 0, 2, 0, -1, -1, 0, 'grunt.png'),
-('Commandant Shepard', 'Shepard', 5, 5, 5, 5, 5, 5, 5, 'shepard.png');
+--INSERT INTO fight_adversary (name, race, strength, perception, endurance, charisma, intelligence, agility, luck, img)
+--VALUES
+--('Wicket', 'Ewok', 0, 0, 0, 0, 0, 0, 0, 'wicket.png'),
+--('Fluttershy', 'Pegase', 2, 2, 2, 2, 2, 2, 2, 'flutter.png'),
+--('Grunt', 'Krogan', 2, 0, 2, 0, -1, -1, 0, 'grunt.png'),
+--('Commandant Shepard', 'Shepard', 5, 5, 5, 5, 5, 5, 5, 'shepard.png');
 
 CREATE TABLE IF NOT EXISTS fight_special (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,14 +88,14 @@ CREATE TABLE IF NOT EXISTS fight_special (
     luck INTEGER
 );
 
-INSERT INTO fight_special (lvl, strength, perception, endurance, charisma, intelligence, agility, luck)
-VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
-(2, 3, 2, 3, 1, 1, 3, 2),
-(3, 3, 3, 4, 2, 1, 3, 3),
-(4, 4, 3, 6, 2, 1, 3, 3),
-(5, 5, 3, 6, 2, 1, 3, 4),
-(6, 5, 3, 6, 2, 1, 4, 4),
-(7, 5, 3, 6, 2, 2, 4, 4),
-(8, 5, 3, 6, 3, 2, 4, 4),
-(9, 6, 3, 6, 3, 2, 4, 4),
-(10, 8, 3, 6, 3, 2, 4, 4);
+--INSERT INTO fight_special (lvl, strength, perception, endurance, charisma, intelligence, agility, luck)
+--VALUES  (1, 2, 1, 2, 1, 1, 2, 1),
+--(2, 3, 2, 3, 1, 1, 3, 2),
+--(3, 3, 3, 4, 2, 1, 3, 3),
+--(4, 4, 3, 6, 2, 1, 3, 3),
+--(5, 5, 3, 6, 2, 1, 3, 4),
+--(6, 5, 3, 6, 2, 1, 4, 4),
+--(7, 5, 3, 6, 2, 2, 4, 4),
+--(8, 5, 3, 6, 3, 2, 4, 4),
+--(9, 6, 3, 6, 3, 2, 4, 4),
+--(10, 8, 3, 6, 3, 2, 4, 4);

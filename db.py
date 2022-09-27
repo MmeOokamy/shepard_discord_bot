@@ -28,6 +28,28 @@ def db_connect():
     c.executescript(sql_script)
 
 
+def db_user_exist(user_id):
+    return False if c.execute(f"SELECT 1 FROM user WHERE user_id = '{user_id}'").fetchone() is None else True
+
+
+def db_user_exist_return_id(user_id):
+    user = c.execute(f"SELECT user_id FROM user WHERE user_id = '{user_id}'").fetchone()
+    if user is not None:
+        return user['id']
+
+
+def db_user_create(user_id, user_name):
+    c.execute(f'''
+        INSERT INTO user (user_id, user)
+        VALUES ('{user_id}', '{user_name}');
+    ''')
+    c.execute(f'''
+         INSERT INTO fight_player (user_id)
+         VALUES ('{user_id}');
+     ''')
+    db.commit()
+
+
 # Creer le membre dans la bdd et init toutes les tables necessaries
 def db_create_user(user_id, user):
     user_obj = c.execute(f"SELECT 1 FROM user WHERE user_id = '{user_id}'")
@@ -43,9 +65,9 @@ def db_create_user(user_id, user):
         db.commit()
 
 
-###################
-#   BOT COMMAND   #
-###################
+###########################
+# ###   BOT COMMAND   ### #
+###########################
 def db_create_quote(user, quote):
     c.execute(f'''
         INSERT INTO quotes ( quote, user_name)
@@ -60,10 +82,13 @@ def db_get_quote():
     ''').fetchall()
 
 
-###################
-#   BOT SHEPARD   #
-###################
+###########################
+# ###   BOT SHEPARD   ### #
+###########################
 
+###################
+#   user/player   #
+###################
 # retourne les informations du joueur
 def db_fight_get_stats_by_user(user_id):
     return c.execute(f'''
@@ -91,8 +116,117 @@ def db_fight_get_user_special(user_id):
         ''').fetchone()
 
 
+###################
+#      STATS      #
+###################
+# retourne le lvl et l'xp total obtenir avec le jeu fight
+# ('xp':0, 'lvl':1)
+def db_fight_get_user_xp_lvl(user_id):
+    return c.execute(f'''
+        SELECT xp, lvl, win
+        FROM fight_player
+        WHERE user_id = {user_id}
+    ''').fetchone()
+
+
+def db_fight_user_total_victory(user_id):
+    win = c.execute(f'''
+        SELECT win
+        FROM fight_player
+        WHERE user_id = {user_id}
+    ''').fetchone()
+    return win['win']
+
+
+def db_fight_user_xp(user_id):
+    win = c.execute(f'''
+        SELECT xp
+        FROM fight_player
+        WHERE user_id = {user_id}
+    ''').fetchone()
+    return win['xp']
+
+
+# retourne la liste des niveaux
+def db_fight_get_level():
+    return c.execute('''
+        SELECT * FROM fight_level
+        ORDER BY lvl ASC
+    ''').fetchall()
+
+
+# retourne un niveau par son numéro
+def db_fight_get_level_by_lvl(lvl):
+    return c.execute(f'''
+        SELECT * FROM fight_level
+        WHERE lvl = {lvl}
+    ''').fetchone()
+
+
+# retourne l'xp gagné par combat en fonction du niveau
+def db_fight_level_get_xp_if_win(lvl):
+    lvl_xp = c.execute(f'''
+        SELECT pts
+        FROM fight_level
+        WHERE lvl = {lvl}
+    ''').fetchone()
+    return lvl_xp['pts']
+
+
+###################
+#   Adversaires   #
+###################
+# retourne la liste des adv
+def db_fight_get_adversary():
+    return c.execute(f'''
+        SELECT * FROM fight_adversary
+        ORDER BY id ASC
+    ''').fetchall()
+
+
+# retourne un adv par son id
+def db_fight_get_adversary_by_id(adv_id):
+    return c.execute(f'''
+        SELECT * FROM fight_adversary
+        WHERE id = {adv_id}
+    ''').fetchone()
+
+
+###################
+#  S.P.E.C.I.A.L  #
+###################
+
+# retourne la liste des special
+def db_fight_get_special():
+    return c.execute('''
+        SELECT * FROM fight_special
+    ''').fetchall()
+
+
+# retourne special par son niveau(joueur ou adversaire)
+def db_fight_get_special_by_lvl(lvl):
+    return c.execute(f'''
+        SELECT * FROM fight_special
+        WHERE lvl = {lvl}
+    ''').fetchone()
+
+
+# retourne special par son niveau(joueur ou adversaire)
+def db_fight_get_special_by_user(user_id):
+    return c.execute(f'''
+        SELECT fs.strength AS strength, fs.perception AS perception,
+                fs.endurance AS endurance, fs.charisma AS charisma,
+                fs.intelligence AS intelligence, fs.agility AS agility,
+                fs.luck AS luck, fp.lvl AS lvl
+        FROM fight_special fs
+        JOIN fight_player fp on fp.lvl = fs.lvl
+        WHERE fp.user_id = {user_id}
+    ''').fetchone()
+
+
 # ajoute des points dans le special du joueur
-def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0, luck=0):
+def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0,
+                             luck=0):
     # mets a jours le special
     c.execute(f''' 
         UPDATE fight_player
@@ -106,6 +240,51 @@ def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, cha
         WHERE user_id = {int(user_id)}
     ''')
     db.commit()
+
+
+def db_fight_get_special_total(user_id, adv_id=0):
+    special = db_fight_get_special_by_user(user_id)
+    if adv_id == 0:
+        player = db_fight_get_user_special(user_id)
+        # {'name': 'Ookamy', 'strength': 1, 'perception': 1, 'endurance': 1, 'charisma': 1, 'intelligence': 1,
+        # 'agility': 1, 'luck': 1, 'lvl': 1, 'xp': 9}
+    else:
+        player = db_fight_get_adversary_by_id(adv_id)
+        # {'id': 4, 'name': 'Commandant Shepard', 'img': 'shepard.png', 'race': 'Shepard', 'strength': 5,
+        # 'perception': 5, 'endurance': 5, 'charisma': 5, 'intelligence': 5, 'agility': 5, 'luck': 5}
+    s = 0 if (int(special['strength']) + int(player['strength'])) < 0 \
+        else (int(special['strength']) + int(player['strength']))
+
+    p = 0 if (int(special['perception']) + int(player['perception'])) < 0 \
+        else (int(special['perception']) + int(player['perception']))
+
+    e = 0 if (int(special['endurance']) + int(player['endurance'])) < 0 \
+        else (int(special['endurance']) + int(player['endurance']))
+
+    ch = 0 if (int(special['charisma']) + int(player['charisma'])) < 0 \
+        else (int(special['charisma']) + int(player['charisma']))
+
+    i = 0 if (int(special['intelligence']) + int(player['intelligence'])) < 0 \
+        else (int(special['intelligence']) + int(player['intelligence']))
+
+    a = 0 if (int(special['agility']) + int(player['agility'])) < 0 \
+        else (int(special['agility']) + int(player['agility']))
+
+    lu = 0 if (int(special['luck']) + int(player['luck'])) < 0 \
+        else (int(special['luck']) + int(player['luck']))
+
+    special = {
+        'name': player['name'],
+        'lvl': special['lvl'],
+        'strength': s,
+        'perception': p,
+        'endurance': e,
+        'charisma': ch,
+        'intelligence': i,
+        'agility': a,
+        'luck': lu
+    }
+    return special
 
 
 # retourne les informations calculer pour la creation de l'objet Fighter
@@ -131,7 +310,7 @@ def db_fight_get_user_special_for_create_fighter(user_id):
         else (int(special['agility']) + int(user['agility']))
 
     lu = 0 if (int(special['luck']) + int(user['luck'])) < 0 \
-         else (int(special['luck']) + int(user['luck']))
+        else (int(special['luck']) + int(user['luck']))
 
     user_obj = {
         'name': user['name'],
@@ -148,84 +327,13 @@ def db_fight_get_user_special_for_create_fighter(user_id):
     return user_obj
 
 
-# retourne le lvl et l'xp total obtenir avec le jeu fight
-# ('xp':0, 'lvl':1)
-def db_fight_get_user_xp_lvl(user_id):
-    return c.execute(f'''
-        SELECT xp, lvl
-        FROM fight_player
-        WHERE user_id = {user_id}
-    ''').fetchone()
-
-
-def db_fight_win(user_id, xp=0):
-    c.execute(f'''
-        UPDATE fight_player
-        SET win = win + 1,
-            xp = xp + {xp}
-        WHERE
-            user_id = {user_id}
-    ''')
-    db.commit()
-    
-def db_fight_loose(user_id):
-    c.execute(f'''
-        UPDATE fight_player
-        SET loose = loose + 1
-        WHERE
-            user_id = {user_id}
-    ''')
-    db.commit()
-    
-# retourne la liste des niveaux
-def db_fight_get_level():
-    return c.execute('''
-        SELECT * FROM fight_level
-        ORDER BY lvl ASC
-    ''').fetchall()
-
-
-# retourne un niveau par son numéro
-def db_fight_get_level_by_lvl(lvl):
-    return c.execute(f'''
-        SELECT * FROM fight_level
-        WHERE lvl = {lvl}
-    ''').fetchone()
-
-
-# retourne l'xp gagné par combat en fonction du niveau
-def db_fight_level_get_xp_if_win(lvl):
-    lvl_xp = c.execute(f'''
-        SELECT total_xp as xp
-        FROM fight_level
-        WHERE lvl = {lvl}
-    ''').fetchone()
-    return lvl_xp['xp']
-
-
-# retourne la liste des adv
-def db_fight_get_adversary():
-    return c.execute(f'''
-        SELECT * FROM fight_adversary
-        ORDER BY id ASC
-    ''').fetchall()
-
-
-# retourne un adv par son id
-def db_fight_get_adversary_by_id(adv_id):
-    return c.execute(f'''
-        SELECT * FROM fight_adversary
-        WHERE id = {adv_id}
-    ''').fetchone()
-
-
 # retourne l'adversaire avec son special calculé
 # pour la creation de l'objet Fighter
 def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
     adv_select = db_fight_get_adversary_by_id(adv_id)
     user_lvl = db_fight_get_user_xp_lvl(user_id)
     special = db_fight_get_special_by_lvl(user_lvl['lvl'])
-    xp_win = db_fight_level_get_xp_if_win(user_lvl['lvl'])
+    pts = db_fight_level_get_xp_if_win(user_lvl['lvl'])
 
     s = 0 if (int(special['strength']) + int(adv_select['strength'])) < 0 \
         else (int(special['strength']) + int(adv_select['strength']))
@@ -259,22 +367,31 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
         'agility': a,
         'luck': lu,
         'race': adv_select['race'],
-        'xp_win': xp_win
+        'pts': pts
     }
-    # print(adv)
+    # print(f"db_fight_get_adversary_by_id_for_create  :{adv}")
     return adv
 
 
-# retourne la liste des special
-def db_fight_get_special():
-    return c.execute('''
-        SELECT * FROM fight_special
-    ''').fetchall()
+###################
+#      SCORES     #
+###################
+def db_fight_win(user_id, xp=0):
+    c.execute(f'''
+        UPDATE fight_player
+        SET win = win + 1,
+            xp = xp + {xp}
+        WHERE
+            user_id = {user_id}
+    ''')
+    db.commit()
 
 
-# retourne special par son niveau(joueur ou adversaire)
-def db_fight_get_special_by_lvl(lvl):
-    return c.execute(f'''
-        SELECT * FROM fight_special
-        WHERE lvl = {lvl}
-    ''').fetchone()
+def db_fight_loose(user_id):
+    c.execute(f'''
+        UPDATE fight_player
+        SET loose = loose + 1
+        WHERE
+            user_id = {user_id}
+    ''')
+    db.commit()
