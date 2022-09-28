@@ -18,9 +18,48 @@ class BotBattle(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
+        
+    
+    @commands.command(name="stats", help="Les stats du Fight Club")
+    @user_exist()
+    async def fight_stats(self, ctx):
+        user = db_fight_get_stats_by_user(ctx.author.id)
+        await ctx.reply(f"Salut {ctx.author}, \n"
+                        f"tu es niveau {user['lvl']} \n"
+                        f"ton de rang est {user['rang']},\n"
+                        f"avec {user['win']} victoire sur {int(user['win']) + int(user['loose'])} parties !",
+                        mention_author=True)
 
-    # Mini Rpg Fight Game
-    @commands.command(name="battle", help="Fight Club")
+    @commands.command(name="menu", help="Le menu")
+    @user_exist()
+    async def fight_menu(self, ctx):
+        view = FightMenu(ctx)
+        await ctx.reply('Quelle action fais-tu ?', view=view, mention_author=True)
+
+    # carte des adversaires
+    @commands.command(name="adv", help="Details des adversaires")
+    @user_exist()
+    async def fight_adv_embed(self, ctx):
+        e = embed_advs(ctx)
+        files, embeds = e['files'], e['embeds']
+        await ctx.send(files=files, embeds=embeds, delete_after=40)
+
+    @commands.command(name="btn",hidden=True)
+    @user_exist()
+    async def fight_adv_btn(self, ctx):
+        # advs = db_fight_get_adversary()
+
+        view = FightAdversary(ctx)
+        await ctx.send('Choisi ton adversaire !', view=view)
+        await view.wait()
+        print(view.value)
+        e = embed_adv(ctx, view.value)
+        file, embed = e['file'], e['embed']
+        await ctx.send(file=file, embed=embed)
+
+
+    # Mini Rpg text Fight Game
+    @commands.command(name="battxt", help="Fight Club version text")
     @user_exist()
     async def fight_game(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
@@ -120,7 +159,7 @@ class BotBattle(commands.Cog):
 
             # Player_two : adversaire
             adv = db_fight_get_adversary_by_id_for_create(r_adv, ctx.author.id)
-            xp_win = adv['xp_win']
+            pts = adv['pts']
             player_two = Fighter(adv['name'], adv['strength'], adv['perception'], adv['endurance'], adv['charisma'],
                                  adv['intelligence'], adv['agility'], adv['luck'])
 
@@ -169,19 +208,20 @@ class BotBattle(commands.Cog):
                 elif int(decision.content) == 3:
                     await status_fighter(player_one, player_two)
                 elif int(decision.content) == 4:
-                    await ctx.send(f"Si tu gagne cette partie tu aura {xp_win} pts d'xp")
+                    await ctx.send(f"Si tu gagne cette partie tu aura {pts} pts d'xp")
             else:
                 if not player_one.alive:
-                    await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
-                    db_fight_win(ctx.author.id, 3)
-                elif not player_two.alive:
-                    await ctx.send(f"{player_one.name} gagne contre {player_two.name} :muscle:!")
                     db_fight_loose(ctx.author.id)
+                    await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
+                elif not player_two.alive:
+                    db_fight_win(ctx.author.id, pts)
+                    await ctx.send(f"{player_one.name} gagne contre {player_two.name} :muscle:!")
 
-    # Mini Rpg Fight Game
-    @commands.command(name="battest", help="Fight Club Develop")
+
+    # Mini Rpg avec bouton et embed Fight Game
+    @commands.command(name="battle", help="Fight Club version évolué")
     @user_exist()
-    async def fight_game_test(self, ctx):
+    async def battle_game(self, ctx):
         user = db_fight_get_stats_by_user(ctx.author.id)
 
         # Fonction utils
@@ -302,7 +342,7 @@ class BotBattle(commands.Cog):
             while player_one.alive and player_two.alive:
                 choice = ''
                 view_fc = FightChoices(ctx)
-                await ctx.reply('Quelle action fais-tu ?', view=view_fc,  mention_author=True)
+                await ctx.reply('Quelle action fais-tu ?', view=view_fc, mention_author=True)
                 await view_fc.wait()
                 choice = view_fc.value
                 # choix au combat
@@ -328,14 +368,25 @@ class BotBattle(commands.Cog):
 
     @commands.command(name="win", help="dev")
     @user_exist()
-    async def fight_win_test(self, ctx):
+    async def fight_win_test(self, ctx, member: discord.Member = None):
+        if member is None:
+            member = ctx.author
+
+        print('member')
+        print(member)
+        print(member.display_name)
+        print(member.display_avatar)
+
+
+
+
         # quand gagne +xp +win chek l'xp si =< palier alors attribution des pts
-        pts = 5
-        # db_fight_win(ctx.author.id, pts)
-        po = db_fight_get_special_total(ctx.author.id, adv_id=0)
-        sh = db_fight_get_special_total(ctx.author.id, adv_id=4)
-        await ctx.send(f"{po}")
-        await ctx.send(f"{sh}")
+        # pts = 5
+        # # db_fight_win(ctx.author.id, pts)
+        # po = db_fight_get_special_total(ctx.author.id, adv_id=0)
+        # sh = db_fight_get_special_total(ctx.author.id, adv_id=4)
+        # await ctx.send(f"{po}")
+        # await ctx.send(f"{sh}")
 
 
 async def setup(bot):

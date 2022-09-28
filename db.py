@@ -116,6 +116,21 @@ def db_fight_get_user_special(user_id):
         ''').fetchone()
 
 
+# retourne toutes les infos + special
+def db_fight_user_get_all_info(user_id):
+    return c.execute(f'''
+            SELECT u.user AS name,
+                fu.strength AS strength, fu.perception AS perception,
+                fu.endurance AS endurance, fu.charisma AS charisma,
+                fu.intelligence AS intelligence, fu.agility AS agility,
+                fu.luck AS luck, fu.lvl AS lvl, fu.xp AS xp
+            FROM user u
+            JOIN fight_player fu ON u.user_id = fu.user_id
+            JOIN fight_level fl ON fp.lvl = fl.lvl
+            WHERE u.user_id = {user_id}
+        ''').fetchone()
+
+
 ###################
 #      STATS      #
 ###################

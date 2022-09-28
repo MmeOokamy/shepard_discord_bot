@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 intents.members = True
 intents.message_content = True
 
@@ -30,8 +30,6 @@ async def load_extensions():
 
 async def main():
     async with bot:
-        print('---Load Extensions---')
-        await load_extensions()
         print('---Load/Init DB---')
         try:
             db_connect()
@@ -39,6 +37,8 @@ async def main():
         except OSError as err:
             print(f"OS error: {err}")
             print(f"Unexpected error: {sys.exc_info()[0]}")
+        print('---Load Extensions---')
+        await load_extensions()
         print('---Start Bot---')
         # TESTEURBOT  -  TOKEN
         await bot.start(os.getenv("TOKEN"))
