@@ -38,7 +38,7 @@ class BotGames(commands.Cog):
             await ctx.reply('Dommage tu as mis du temps a répondre :worried:', mention_author=True)
 
         if int(guess.content) == answer:
-            await ctx.reply('GG!')
+            await ctx.reply('🎉 GG 🎉')
         else:
             await ctx.reply(f"Oops, PERDU! c'était : {answer}", mention_author=True)
 
