@@ -83,9 +83,25 @@ def db_get_quote():
 
 
 ###########################
-# ###   BOT SHEPARD   ### #
+# ###   BOT  BATTLE   ### #
 ###########################
 
+###################
+#  users/players  #
+###################
+def db_fight_podium():
+    return c.execute(f'''
+                     SELECT u.user as user, fp.win AS partie_gagne, fp.xp as exp, fp.lvl as niveau, 
+                     fp.strength + fs.strength AS force, fp.perception + fs.perception AS perception, 
+                     fp.endurance + fs.endurance AS endurance, fp.charisma + fs.charisma AS charisme, 
+                     fp.intelligence + fs.intelligence AS intelligence, fp.agility + fs.agility AS agility, 
+                     fp.luck + fs.luck as luck 
+                     FROM user u
+                     JOIN fight_player fp ON u.user_id = fp.user_id
+                     JOIN fight_special fs ON fp.lvl = fs.lvl
+                     ORDER BY fp.win DESC, fp.xp DESC, fp.lvl DESC;
+                     ''').fetchall()
+    
 ###################
 #   user/player   #
 ###################
