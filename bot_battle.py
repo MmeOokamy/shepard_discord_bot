@@ -18,7 +18,6 @@ class BotBattle(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
-        
 
     @commands.command(name="podium", help="")
     @user_exist()
@@ -37,19 +36,45 @@ class BotBattle(commands.Cog):
         # ]
         players = db_fight_podium()
         # LE 1er
-        embed = discord.Embed(title=f"<:first_place:1028672390403735574> {players[0]['user']}", description=f"xp : {players[0]['exp']}", color=discord.Colour.random())
-        file = discord.File(f"/home/container/battle/img/rank.png", filename="rank.png")
-        # file = discord.File(f"./battle/img/rank.png", filename="rank.png")
+        embed = discord.Embed(title=f"<:first_place:1028672390403735574> {players[0]['user']}",
+                              description=f"xp : {players[0]['exp']}", color=discord.Colour.random())
+        # file = discord.File(f"/home/container/battle/img/rank.png", filename="rank.png")
+        file = discord.File(f"battle/img/rank.png", filename="rank.png")
         # embed.set_author(name="Rank", icon_url="attachment://rank.png")
         embed.set_thumbnail(url="attachment://rank.png")
         # 2em
-        embed.add_field(name=f"<:second_place:1028673709306826752> {players[1]['user']}", value=f"xp : {players[1]['exp']}", inline=True)
+        embed.add_field(name=f"<:second_place:1028673709306826752> {players[1]['user']}",
+                        value=f"xp : {players[1]['exp']}", inline=True)
         # 3eme
-        embed.add_field(name=f"<:third_place:1028673799090098196> {players[2]['user']}", value=f"xp : {players[2]['exp']}", inline=True)
+        embed.add_field(name=f"<:third_place:1028673799090098196> {players[2]['user']}",
+                        value=f"xp : {players[2]['exp']}", inline=True)
         # les autre
         # embed.set_footer(text=f"")
 
         await ctx.send(file=file, embed=embed)
+
+    @commands.command(name="player_stat", help="Stats des membres")
+    @user_exist()
+    async def fight_stats_player(self, ctx, member: discord.Member = None):
+        if member is None:
+            member = ctx.author
+        # information member
+        player = db_fight_user_detail(int(member.id))
+
+        # Embed
+        embed = discord.Embed(title=f"{player['user']}",
+                              description=f">>> Niv.{player['niveau']}/Vic.{player['partie_gagne']}/Exp.{player['xp']}",
+                              color=discord.Colour.random())
+        embed.set_thumbnail(url=f"{member.display_avatar}")
+        embed.add_field(name="S.P.E.C.I.A.L",
+                        value=f"{player['strength']} :muscle: | "
+                              f"{player['perception']} :eye: | "
+                              f"{player['endurance']} :person_running: | "
+                              f"{player['charisma']} :superhero: | "
+                              f"{player['intelligence']} :brain: | "
+                              f"{player['agility']} :person_doing_cartwheel: | "
+                              f"{player['luck']} :four_leaf_clover:")
+        await ctx.send(embed=embed)
 
     @commands.command(name="stats", help="Tes stats du Fight Club")
     @user_exist()
@@ -60,7 +85,6 @@ class BotBattle(commands.Cog):
                         f"ton de rang est {user['rang']},\n"
                         f"avec {user['win']} victoire sur {int(user['win']) + int(user['loose'])} parties !",
                         mention_author=True)
-
 
     # Mini Rpg avec bouton et embed Fight Game
     @commands.command(name="battle", help="Fight Club version évolué")
@@ -131,8 +155,8 @@ class BotBattle(commands.Cog):
         async def healer(player):
             pv_potion = player.take_care_of_yourself()
             embed = discord.Embed(title="Utilise Soin", color=discord.Colour.random())
-            file = discord.File(f"/home/container/battle/img/potion.png", filename="potion.png")
-            # file = discord.File(f"./battle/img/potion.png", filename="potion.png")
+            # file = discord.File(f"/home/container/battle/img/potion.png", filename="potion.png")
+            file = discord.File(f"battle/img/potion.png", filename="potion.png")
             embed.set_author(name=player.name, icon_url="attachment://potion.png")
             embed.add_field(name="Plonge la main dans sa poche et en sort une petite fiole....",
                             value=f"Et hop! Dans le gosier !\n La potion de vitalité lui donne {pv_potion} de pv en plus")
@@ -214,13 +238,13 @@ class BotBattle(commands.Cog):
     # ################ #
     # # FONCTION DEV # #
     # ################ #
-    
+
     @commands.command(name="menu", help="Le menu", hidden=True)
     @user_exist()
     async def fight_menu(self, ctx):
         view = FightMenu(ctx)
         await ctx.reply('Quelle action fais-tu ?', view=view, mention_author=True)
-    
+
     # carte des adversaires
     @commands.command(name="adv", hidden=True)
     @user_exist()

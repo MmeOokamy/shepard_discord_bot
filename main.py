@@ -12,12 +12,12 @@ from def_utils import is_me  # fonction utile partout
 from dotenv import load_dotenv
 
 load_dotenv()
-
+PREFIX = os.getenv("PREFIX")
 intents = discord.Intents.all()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 
 cog_files = ['bot_shepard', 'bot_battle', 'bot_command', 'bot_games']
 
@@ -41,7 +41,7 @@ async def main():
         await load_extensions()
         print('---Start Bot---')
         # TESTEURBOT  -  TOKEN
-        await bot.start(os.getenv("TOKEN"))
+        await bot.start(os.getenv("TESTEURBOT"))
 
 
 @bot.command(name='fait_dodo', hidden=True)
