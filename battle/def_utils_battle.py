@@ -71,8 +71,8 @@ def embed_adv(ctx, adv_id):
     adv = db_fight_get_adversary_by_id(adv_id)
     colors = ('', 0x1abc9c, 0xe91e63, 0xf1c40f, 0xe74c3c)
     special = db_fight_get_adversary_by_id_for_create(adv['id'], ctx.author.id)
-    file = discord.File(f"/home/container/battle/img/{adv['img']}", filename=adv['img'])
-    # file = discord.File(f"./battle/img/{adv['img']}", filename=adv['img'])
+    # file = discord.File(f"/home/container/battle/img/{adv['img']}", filename=adv['img'])
+    file = discord.File(f"battle/img/{adv['img']}", filename=adv['img'])
     img = f"attachment://{adv['img']}"
     embed = discord.Embed(description=f">>> {special['pts']} pts / victoire", color=colors[adv['id']])
     embed.set_author(name=f"{adv['name']} ({adv['race']})", icon_url=f"{img}")
@@ -100,8 +100,8 @@ def embed_advs(ctx):
     colors = ('', 0x1abc9c, 0xe91e63, 0xf1c40f, 0xe74c3c)
     for adv in adv_list:
         special = db_fight_get_adversary_by_id_for_create(adv['id'], ctx.author.id)
-        file = discord.File(f"/home/container/battle/img/{adv['img']}", filename=adv['img'])
-        # file = discord.File(f"./battle/img/{adv['img']}", filename=adv['img'])
+        # file = discord.File(f"/home/container/battle/img/{adv['img']}", filename=adv['img'])
+        file = discord.File(f"battle/img/{adv['img']}", filename=adv['img'])
         files.append(file)
         img = f"attachment://{adv['img']}"
         embed = discord.Embed(description=f">>> {special['pts']} pts / victoire", color=colors[adv['id']])

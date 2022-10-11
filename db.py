@@ -101,7 +101,22 @@ def db_fight_podium():
                      JOIN fight_special fs ON fp.lvl = fs.lvl
                      ORDER BY fp.win DESC, fp.xp DESC, fp.lvl DESC;
                      ''').fetchall()
-    
+
+
+def db_fight_user_detail(player_id):
+    return c.execute(f'''
+                     SELECT u.user as user, fp.win AS partie_gagne, fp.xp as xp, fp.lvl as niveau, 
+                     fp.strength + fs.strength AS strength, fp.perception + fs.perception AS perception, 
+                     fp.endurance + fs.endurance AS endurance, fp.charisma + fs.charisma AS charisma, 
+                     fp.intelligence + fs.intelligence AS intelligence, fp.agility + fs.agility AS agility, 
+                     fp.luck + fs.luck as luck 
+                     FROM user u
+                     JOIN fight_player fp ON u.user_id = fp.user_id
+                     JOIN fight_special fs ON fp.lvl = fs.lvl
+                     WHERE u.user_id = {int(player_id)};
+                     ''').fetchone()
+
+
 ###################
 #   user/player   #
 ###################

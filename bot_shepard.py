@@ -21,16 +21,17 @@ class CommandantShepard(commands.Cog):
         print(f"{self.__class__.__name__} --- OK")
         await channel.send(":sunglasses: I'm back bitches")
         # await channel.send("https://tenor.com/tk8a.gif")  # loool
-    
+
     @commands.Cog.listener()
-    async def on_member_join(self, member:discord.Member):
+    async def on_member_join(self, member: discord.Member):
         await member.send('Hey bienvenue !!')
 
-        
-    # @commands.Cog.listener(name="cchan")
-    # async def create_chan(self, txt):
-    #     self.bot.create_guild(name=txt)
-        
+    # <:incagay:710147834703511574>
+    # reaction en fonction d'un mot
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if "shepard" in message.content.lower():
+            await message.send(content=f"<:incagay:710147834703511574>")
 
 
 async def setup(bot):
