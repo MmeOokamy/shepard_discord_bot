@@ -41,7 +41,7 @@ async def main():
         await load_extensions()
         print('---Start Bot---')
         # TESTEURBOT  -  TOKEN
-        await bot.start(os.getenv("TESTEURBOT"))
+        await bot.start(os.getenv("TOKEN"))
 
 
 @bot.command(name='fait_dodo', hidden=True)
