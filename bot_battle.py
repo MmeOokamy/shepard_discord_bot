@@ -38,9 +38,7 @@ class BotBattle(commands.Cog):
         # LE 1er
         embed = discord.Embed(title=f"<:first_place:1028672390403735574> {players[0]['user']}",
                               description=f"xp : {players[0]['exp']}", color=discord.Colour.random())
-        # file = discord.File(f"/home/container/battle/img/rank.png", filename="rank.png")
         file = discord.File(f"battle/img/rank.png", filename="rank.png")
-        # embed.set_author(name="Rank", icon_url="attachment://rank.png")
         embed.set_thumbnail(url="attachment://rank.png")
         # 2em
         embed.add_field(name=f"<:second_place:1028673709306826752> {players[1]['user']}",
@@ -155,7 +153,6 @@ class BotBattle(commands.Cog):
         async def healer(player):
             pv_potion = player.take_care_of_yourself()
             embed = discord.Embed(title="Utilise Soin", color=discord.Colour.random())
-            # file = discord.File(f"/home/container/battle/img/potion.png", filename="potion.png")
             file = discord.File(f"battle/img/potion.png", filename="potion.png")
             embed.set_author(name=player.name, icon_url="attachment://potion.png")
             embed.add_field(name="Plonge la main dans sa poche et en sort une petite fiole....",

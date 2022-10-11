@@ -17,9 +17,9 @@ intents = discord.Intents.all()
 intents.members = True
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-cog_files = ['bot_shepard', 'bot_battle', 'bot_command', 'bot_games']
+cog_files = ['bot_shepard', 'bot_battle', 'bot_command', 'bot_games', 'bot_help']
 
 
 async def load_extensions():
