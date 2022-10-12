@@ -50,21 +50,6 @@ def db_user_create(user_id, user_name):
     db.commit()
 
 
-# Creer le membre dans la bdd et init toutes les tables necessaries
-def db_create_user(user_id, user):
-    user_obj = c.execute(f"SELECT 1 FROM user WHERE user_id = '{user_id}'")
-    if user_obj.fetchone() is None:
-        c.execute(f'''
-            INSERT INTO user (user_id, user)
-            VALUES ('{user_id}', '{user}');
-        ''')
-        c.execute(f'''
-             INSERT INTO fight_player (user_id)
-             VALUES ('{user_id}');
-         ''')
-        db.commit()
-
-
 ###########################
 # ###   BOT COMMAND   ### #
 ###########################
@@ -175,24 +160,6 @@ def db_fight_get_user_xp_lvl(user_id):
     ''').fetchone()
 
 
-def db_fight_user_total_victory(user_id):
-    win = c.execute(f'''
-        SELECT win
-        FROM fight_player
-        WHERE user_id = {user_id}
-    ''').fetchone()
-    return win['win']
-
-
-def db_fight_user_xp(user_id):
-    win = c.execute(f'''
-        SELECT xp
-        FROM fight_player
-        WHERE user_id = {user_id}
-    ''').fetchone()
-    return win['xp']
-
-
 # retourne la liste des niveaux
 def db_fight_get_level():
     return c.execute('''
@@ -242,23 +209,44 @@ def db_fight_get_adversary_by_id(adv_id):
 #  S.P.E.C.I.A.L  #
 ###################
 
-# retourne la liste des special
 def db_fight_get_special():
+    """ Donne les informations de la table fight_special
+    Returns:
+        List: id, lvl, strength, perception, endurance,
+                  charisma, intelligence, agility, luck
+    """    
     return c.execute('''
         SELECT * FROM fight_special
     ''').fetchall()
 
 
-# retourne special par son niveau(joueur ou adversaire)
 def db_fight_get_special_by_lvl(lvl):
+    """ donne le detail du special en fonction du lvl
+
+    Args:
+        lvl (int): niveau 
+
+    Returns:
+        Dict: id, lvl, strength, perception, endurance,
+                  charisma, intelligence, agility, luck
+    """
     return c.execute(f'''
         SELECT * FROM fight_special
         WHERE lvl = {lvl}
     ''').fetchone()
 
 
-# retourne special par son niveau(joueur ou adversaire)
 def db_fight_get_special_by_user(user_id):
+    """ donne le special d'un membre
+
+    Args:
+        user_id (int): discord member.id 
+
+    Returns:
+        Dict: strength, perception, endurance, charisma, 
+                intelligence, agility, luck,
+                lvl
+    """
     return c.execute(f'''
         SELECT fs.strength AS strength, fs.perception AS perception,
                 fs.endurance AS endurance, fs.charisma AS charisma,
@@ -270,10 +258,20 @@ def db_fight_get_special_by_user(user_id):
     ''').fetchone()
 
 
-# ajoute des points dans le special du joueur
-def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0,
-                             luck=0):
-    # mets a jours le special
+
+def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0, luck=0):
+    """ Fonction pour mettre à jour le SPECIAL du joueur
+
+    Args:
+        user_id (int): discord member.id
+        strength (int, optional): strength - force. Defaults to 0.
+        perception (int, optional): perception. Defaults to 0.
+        endurance (int, optional): endurance. Defaults to 0.
+        charisma (int, optional): charisma. Defaults to 0.
+        intelligence (int, optional): intelligence. Defaults to 0.
+        agility (int, optional): agility. Defaults to 0.
+        luck (int, optional): luck - chance. Defaults to 0.
+    """
     c.execute(f''' 
         UPDATE fight_player
         SET strength = strength + {strength},
@@ -289,6 +287,17 @@ def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, cha
 
 
 def db_fight_get_special_total(user_id, adv_id=0):
+    """ Donne le special du member ou de l'adversaire 
+        par rapport au niveau du member
+
+    Args:
+        user_id (int): discord member.id
+        adv_id (int, optional): id de l'adversaire. Defaults to 0.
+
+    Returns:
+        Dict: name, lvl, strength, perception, endurance,
+              charisma, intelligence, agility, luck
+    """
     special = db_fight_get_special_by_user(user_id)
     if adv_id == 0:
         player = db_fight_get_user_special(user_id)
@@ -333,8 +342,16 @@ def db_fight_get_special_total(user_id, adv_id=0):
     return special
 
 
-# retourne les informations calculer pour la creation de l'objet Fighter
+
 def db_fight_get_user_special_for_create_fighter(user_id):
+    """ Donne les informations calculer pour la création de l'objet Fighter
+
+    Args:
+        user_id (int): discord member.id
+
+    Returns:
+        Dict: destinée à la création de l'obj Fighter
+    """
     user = db_fight_get_user_special(user_id)
     special = db_fight_get_special_by_lvl(user['lvl'])
     s = 0 if (int(special['strength']) + int(user['strength'])) < 0 \

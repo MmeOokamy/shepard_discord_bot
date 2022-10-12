@@ -37,9 +37,8 @@ def user_exist():
 def member_details(ctx, member: discord.Member = None):
     if member is None:
         member = ctx.author
+    
     print('member all')
-    print("member.accent_color")
-    print(member.accent_color)
     print("member.accent_colour")
     print(member.accent_colour)
     print("member.activities")
@@ -116,82 +115,3 @@ def member_details(ctx, member: discord.Member = None):
     print(member.voice)
     print("member.web_status")
     print(member.web_status)
-    # member all
-    # member.accent_color
-    # None
-    # member.accent_colour
-    # None
-    # member.activities
-    # ()
-    # member.activity
-    # None
-    # member.avatar
-    # https://cdn.discordapp.com/avatars/283935710858313730/5f2985e4ad2fbc1ec764343d847030d7.png?size=1024
-    # member.banner
-    # None
-    # member.bot
-    # False
-    # member.color
-    # #e67e22
-    # member.colour
-    # #e67e22
-    # member.created_at
-    # 2017-02-22 12:19:08.739000+00:00
-    # member.default_avatar
-    # https://cdn.discordapp.com/embed/avatars/1.png
-    # member.desktop_status
-    # online
-    # member.discriminator
-    # 2336
-    # member.display_avatar
-    # https://cdn.discordapp.com/avatars/283935710858313730/5f2985e4ad2fbc1ec764343d847030d7.png?size=1024
-    # member.display_icon
-    # None
-    # member.display_name
-    # Ookamy
-    # member.dm_channel
-    # None
-    # member.guild
-    # PoneyArcEnCiel
-    # member.guild_avatar
-    # None
-    # member.guild_permissions
-    # <Permissions value=2199023255551>
-    # member.id
-    # 283935710858313730
-    # member.joined_at
-    # 2017-08-25 11:32:31.341000+00:00
-    # member.mention
-    # <@283935710858313730>
-    # member.mobile_status
-    # offline
-    # member.mutual_guilds
-    # [<Guild id=350603344722657280 name='PoneyArcEnCiel' shard_id=0 chunked=True member_count=16>]
-    # member.name
-    # Ookamy
-    # member.nick
-    # None
-    # member.pending
-    # False
-    # member.premium_since
-    # None
-    # member.public_flags
-    # <PublicUserFlags value=0>
-    # member.raw_status
-    # online
-    # member.resolved_permissions
-    # None
-    # member.roles
-    # [<Role id=350603344722657280 name='@everyone'>, <Role id=384098773443543040 name='Grand Pôt-au-Feu'>]
-    # member.status
-    # online
-    # member.system
-    # False
-    # member.timed_out_until
-    # None
-    # member.top_role
-    # Grand Pôt-au-Feu
-    # member.voice
-    # None
-    # member.web_status
-    # offline
