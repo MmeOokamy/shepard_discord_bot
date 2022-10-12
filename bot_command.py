@@ -22,7 +22,7 @@ class BotCommand(commands.Cog):
                         'ne pas oublier les "" \n '
                         '!qadd "Appelle moi encore une fois ma princesse et tu vas devoir ramasser tes dents avec tes '
                         'doigts cassés!" "Commandant Shepard ME1 <3 "\n '
-                        'Tu auras un petit message si c\'est bon, pour les voir toutes !lq .', mention_author=True)
+                        'Tu auras un petit message si c\'est bon.', mention_author=True)
 
     @commands.command(name='qadd', help="Ajouter une quote")
     async def add_quote(self, ctx, quote, username):
@@ -64,6 +64,9 @@ class BotCommand(commands.Cog):
         elif "99!" in message.content.lower():
             await message.reply(content=f"{random.choice(brooklyn_99_quotes)}",
                                 mention_author=True)
+
+        elif "shepard" in message.content.lower():
+            await message.reply(content="<:incagay:710147834703511574>", mention_author=False)
 
 
 async def setup(bot):
