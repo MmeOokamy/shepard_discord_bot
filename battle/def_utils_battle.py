@@ -85,11 +85,11 @@ def embed_adv(ctx, adv_id):
                           f"{special['agility']} :person_doing_cartwheel: | "
                           f"{special['luck']} :four_leaf_clover:")
 
-    ef = {
+    file_embed = {
         "file": file,
         "embed": embed
     }
-    return ef
+    return file_embed
 
 
 def embed_advs(ctx):
