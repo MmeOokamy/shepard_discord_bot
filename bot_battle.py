@@ -261,18 +261,15 @@ class BotBattle(commands.Cog):
         e = embed_adv(ctx, view.value)
         file, embed = e['file'], e['embed']
         await ctx.send(file=file, embed=embed)
- 
+
     @commands.command(name="test", hidden=True)
     @user_exist()
     async def fight_test(self, ctx, member: discord.Member = None):
         if member is None:
             member = ctx.author
-            
+
         user_id = int(member.id)
         # regarde si y a lvl up et attribution des pts
-        
-
-
 
 
 async def setup(bot):

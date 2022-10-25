@@ -6,7 +6,7 @@ class Fighter:
     alive = True
     heal = 2
     pv = 50  # pv for all?
-    critical_rate = 0.25
+    critical_rate = 0.75
 
     def __init__(self, name, strength, perception, endurance, charisma, intelligence, agility, luck):
         assert isinstance(name, str), "Attribut 'name': alphanumeric "
@@ -41,8 +41,10 @@ class Fighter:
     def is_critical(self):
         return True if random.randint(1, (self.luck + self.agility)) == 1 else False
 
-    def critical_attack(self):
-        return round(self.attack() * self.critical_rate)
+    def critical_attack(self, atk=0):
+        if atk == 0:
+            atk = self.attack()
+        return round(atk + (atk * self.critical_rate))
 
     def attack(self):
         x = random.randint(1, 10)
