@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from battle.def_utils_battle import embed_adv
 from db import *  # sqlite execute fonction =)
+from emoji import special
 
 
 # Define a simple View that gives us a confirmation menu
@@ -16,21 +17,27 @@ class FightMenu(discord.ui.View):
 
     @discord.ui.button(label='Battle', style=discord.ButtonStyle.green, emoji="⚔")
     async def battle(self, interaction, button):
-        await interaction.response.edit_message(content='☣ Super !')
-        self.value = 'battle'
+        await interaction.response.edit_message(content='☣ Super !', view=None)
+        self.value = 1
+        self.stop()
 
     @discord.ui.button(label='Tes Stats', style=discord.ButtonStyle.green, emoji="💯")
     async def stats(self, interaction, button):
-        await interaction.response.edit_message(content='☣ Voilà !')
+        await interaction.response.edit_message(content='☣ Voilà !', view=None)
+        self.value = 2
+        self.stop()
 
     @discord.ui.button(label='Lvl_up', style=discord.ButtonStyle.green, emoji="🆙")
     async def lvlup(self, interaction, button):
-        await interaction.response.edit_message(content='☣ Gere ton S.P.E.C.I.A.L !')
+        await interaction.response.edit_message(content='☣ Gere ton S.P.E.C.I.A.L !', view=None)
+        self.value = 3
+        self.stop()
 
     @discord.ui.button(label='Adversaires', style=discord.ButtonStyle.blurple, emoji="👿")
     async def adv(self, interaction, button):
-        await interaction.response.send_message(content='!adversaires')
-        self.value = 'adversaires'
+        await interaction.response.edit_message(content='☣ Liste des adversaires', view=None)
+        self.value = 4
+        self.stop()
 
     @discord.ui.button(label='X', style=discord.ButtonStyle.red, emoji="<:incagay:710147834703511574>")
     async def quit(self, interaction, button):
@@ -148,6 +155,49 @@ class FightChoices(discord.ui.View):
         await interaction.response.edit_message(content='🧮', view=None)
         self.value = 3
         self.stop()
+
+    async def interaction_check(self, interaction) -> bool:
+        if interaction.user != self.ctx.author:
+            await interaction.response.send_message("Non non non!", ephemeral=True)
+            return False
+        else:
+            return True
+
+
+class FightSpecial(discord.ui.View):
+    def __init__(self, ctx):
+        super().__init__()
+        self.value = None
+        self.ctx = ctx
+
+    # emoji="<:muscle:1031905306298548314>"
+    @discord.ui.button(label=f"Force", style=discord.ButtonStyle.green, emoji=special['strength'])
+    async def strength(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.edit_message(content='🧮', view=None)
+
+    @discord.ui.button(label='Perception', style=discord.ButtonStyle.green, emoji=special['perception'])
+    async def perception(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+    @discord.ui.button(label='Endurance', style=discord.ButtonStyle.green, emoji=special['endurance'])
+    async def endurance(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+    @discord.ui.button(label='Charisme', style=discord.ButtonStyle.green, emoji=special['charisma'])
+    async def charisma(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+    @discord.ui.button(label='Intelligence', style=discord.ButtonStyle.green, emoji=special['intelligence'])
+    async def intelligence(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+    @discord.ui.button(label='Agilité', style=discord.ButtonStyle.green, emoji=special['agility'])
+    async def agility(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
+
+    @discord.ui.button(label='Chance', style=discord.ButtonStyle.green, emoji=special['luck'])
+    async def luck(self, interaction: discord.Interaction, button: discord.ui.Button):
+        pass
 
     async def interaction_check(self, interaction) -> bool:
         if interaction.user != self.ctx.author:

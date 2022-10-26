@@ -4,11 +4,13 @@ import sys
 import asyncio
 import random
 import discord
+from discord.ui import View, Button
 from discord.ext import commands
 from battle.Fighter import Fighter
 from def_utils import user_exist
 from battle.def_utils_battle import special_txt, embed_one, embed_atk, embed_advs, embed_user
 from battle.battle_buttons import *
+from emoji import special
 
 
 class BotBattle(commands.Cog):
@@ -83,6 +85,32 @@ class BotBattle(commands.Cog):
                         f"ton de rang est {user['rang']},\n"
                         f"avec {user['win']} victoire sur {int(user['win']) + int(user['loose'])} parties !",
                         mention_author=True)
+
+    @commands.command(name="special")
+    @user_exist()
+    async def fight_special(self, ctx):
+        us = db_fight_get_user_special(ctx.author.id)
+        view = View()
+        btn_strength = Button(label=f"Force : {us['strength']}", style=discord.ButtonStyle.green, emoji=special['strength'])
+        btn_perception = Button(label=f"Perception : {us['perception']}", style=discord.ButtonStyle.green, emoji=special['perception'])
+        btn_endurance = Button(label=f"Endurance : {us['endurance']}", style=discord.ButtonStyle.green, emoji=special['endurance'])
+        btn_charisma = Button(label=f"Charisme : {us['charisma']}", style=discord.ButtonStyle.green, emoji=special['charisma'])
+        btn_intelligence = Button(label=f"Intelligence : {us['intelligence']}", style=discord.ButtonStyle.green, emoji=special['intelligence'])
+        btn_agility = Button(label=f"Agilité : {us['agility']}", style=discord.ButtonStyle.green, emoji=special['agility'])
+        btn_luck = Button(label=f"Chance : {us['luck']}", style=discord.ButtonStyle.green, emoji=special['luck'])
+        view.add_item(btn_strength)
+        view.add_item(btn_perception)
+        view.add_item(btn_endurance)
+        view.add_item(btn_charisma)
+        view.add_item(btn_intelligence)
+        view.add_item(btn_agility)
+        view.add_item(btn_luck)
+        await ctx.reply('SPECIAL', view=view, mention_author=True)
+        await view.wait()
+        print(view.value)
+
+
+
 
     # Mini Rpg avec bouton et embed Fight Game
     @commands.command(name="battle", help="Fight Club version évolué")
@@ -239,8 +267,21 @@ class BotBattle(commands.Cog):
     @commands.command(name="menu", help="Le menu", hidden=True)
     @user_exist()
     async def fight_menu(self, ctx):
+        choice = ""
         view = FightMenu(ctx)
         await ctx.reply('Quelle action fais-tu ?', view=view, mention_author=True)
+        await view.wait()
+        choice = view.value
+
+        if int(choice) == 1:
+            print(choice)
+            await self.battle_game(ctx)
+        elif int(choice) == 2:
+            await self.fight_stats_player(ctx)
+        elif int(choice) == 3:
+            await self.fight_test(ctx)
+        elif int(choice) == 4:
+            await self.fight_adv_embed(ctx)
 
     # carte des adversaires
     @commands.command(name="adv", hidden=True)
@@ -257,7 +298,7 @@ class BotBattle(commands.Cog):
         view = FightAdversary(ctx)
         await ctx.send('Choisi ton adversaire !', view=view)
         await view.wait()
-        print(view.value)
+        # print(view.value)
         e = embed_adv(ctx, view.value)
         file, embed = e['file'], e['embed']
         await ctx.send(file=file, embed=embed)

@@ -58,5 +58,18 @@ async def reload_proc(ctx):
     os.system("python main.py")  # don't forget this!
 
 
+@bot.command(name='clear', hidden=True)
+@is_me()
+async def clear_channel(ctx, channel_id=0, nb_message=100):
+    print(channel_id)
+
+    if channel_id == 0:
+        channel = bot.get_channel()
+    else:
+        channel = bot.get_channel(int(channel_id))
+
+    deleted = await channel.purge(limit=int(nb_message))
+    await ctx.send(f'Suppression de {len(deleted)} message(s)', ephemeral=True)
+
 if __name__ == "__main__":
     asyncio.run(main())
