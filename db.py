@@ -150,11 +150,47 @@ def db_fight_user_get_all_info(user_id):
 ###################
 #      STATS      #
 ###################
+def db_fight_step():
+    lvl_total_xp = c.execute(f'''
+        SELECT lvl, total_xp
+        FROM fight_level
+    ''').fetchall()
+    dico = {}
+    for item in lvl_total_xp:
+        dico[item['lvl']] = item['total_xp']
+    return dico
+
+
+def db_fight_check_lvl_xp(user_id):
+    # recup le niveau et lxp du joueur
+    # recup la liste
+    return c.execute(f'''
+        SELECT  fp.xp AS player_XP,
+                (SELECT lvl FROM fight_level where lvl= fp.lvl-1) AS lvl_precedent,
+                fl.lvl AS lvl_now,
+                (SELECT lvl FROM fight_level where lvl= fp.lvl+1) AS lvl_suivant,
+                (SELECT total_xp FROM fight_level where lvl= fp.lvl-1) AS xp_precedent,
+                fl.total_xp AS xp_now,
+                (SELECT total_xp FROM fight_level where lvl= fp.lvl+1) AS xp_suivant
+        FROM fight_level fl
+        JOIN fight_player fp ON fl.lvl = fp.lvl
+        WHERE fp.user_id = {user_id}
+    ''').fetchone()
+
+
 # retourne le lvl et l'xp total obtenir avec le jeu fight
 # ('xp':0, 'lvl':1)
 def db_fight_get_user_xp_lvl(user_id):
     return c.execute(f'''
         SELECT xp, lvl, win
+        FROM fight_player
+        WHERE user_id = {user_id}
+    ''').fetchone()
+
+
+def db_fight_get_user_xp(user_id):
+    return c.execute(f'''
+        SELECT xp
         FROM fight_player
         WHERE user_id = {user_id}
     ''').fetchone()
@@ -214,7 +250,7 @@ def db_fight_get_special():
     Returns:
         List: id, lvl, strength, perception, endurance,
                   charisma, intelligence, agility, luck
-    """    
+    """
     return c.execute('''
         SELECT * FROM fight_special
     ''').fetchall()
@@ -258,8 +294,8 @@ def db_fight_get_special_by_user(user_id):
     ''').fetchone()
 
 
-
-def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0, luck=0):
+def db_fight_special_add_pts(user_id, strength=0, perception=0, endurance=0, charisma=0, intelligence=0, agility=0,
+                             luck=0):
     """ Fonction pour mettre à jour le SPECIAL du joueur
 
     Args:
@@ -340,7 +376,6 @@ def db_fight_get_special_total(user_id, adv_id=0):
         'luck': lu
     }
     return special
-
 
 
 def db_fight_get_user_special_for_create_fighter(user_id):

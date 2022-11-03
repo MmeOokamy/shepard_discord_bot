@@ -311,6 +311,22 @@ class BotBattle(commands.Cog):
 
         user_id = int(member.id)
         # regarde si y a lvl up et attribution des pts
+        if member is None:
+            member = ctx.author
+        palier = db_fight_step()
+        user_id = int(member.id)
+        niveau = db_fight_get_user_xp(user_id)
+        print(palier)
+        i = 1
+        for i in palier:
+            print(f"i:{i}")
+            if 0 < niveau['xp'] < palier[i]:
+                resp = "0 < niveau['xp'] < palier[i]"
+            else:
+                resp = "GG lvl up"
+                return resp
+            print(f"{niveau['xp']} retour {palier[i]} --- {resp}")
+            i += 1
 
 
 async def setup(bot):
