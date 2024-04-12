@@ -19,7 +19,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-cog_files = ['bot_shepard', 'bot_battle', 'bot_command', 'bot_games', 'bot_help']
+cog_files = ["bot_shepard", "bot_battle", "bot_command", "bot_games", "bot_help"]
 
 
 async def load_extensions():
@@ -30,31 +30,31 @@ async def load_extensions():
 
 async def main():
     async with bot:
-        print('---Load/Init DB---')
+        print("---Load/Init DB---")
         try:
             db_connect()
-            print('Database OK')
+            print("Database OK")
         except OSError as err:
             print(f"OS error: {err}")
             print(f"Unexpected error: {sys.exc_info()[0]}")
-        print('---Load Extensions---')
+        print("---Load Extensions---")
         await load_extensions()
-        print('---Start Bot---')
+        print("---Start Bot---")
         # TESTEURBOT  -  TOKEN
         await bot.start(os.getenv("TOKEN"))
 
 
-@bot.command(name='fait_dodo', hidden=True)
+@bot.command(name="fait_dodo", hidden=True)
 @is_me()
 async def kill_proc(ctx):
-    await ctx.send(f'Bonne nuit!')
+    await ctx.send(f"Bonne nuit!")
     await bot.close()  # don't forget this!
 
 
-@bot.command(name='reload', hidden=True)
+@bot.command(name="reload", hidden=True)
 @is_me()
 async def reload_proc(ctx):
-    await ctx.send(f'Ok je recharge !')
+    await ctx.send(f"Ok je recharge !")
     os.system("python main.py")  # don't forget this!
 
 

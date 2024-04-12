@@ -19,12 +19,28 @@ class TestFighter(unittest.TestCase):
         # Player Two Bot
         user_id = int(os.getenv("ADMIN_ID"))
         po = db_fight_get_user_special_for_create_fighter(user_id)
-        self.player_one = Fighter(po['name'], po['strength'], po['perception'], po['endurance'], po['charisma'],
-                                  po['intelligence'], po['agility'], po['luck'])
+        self.player_one = Fighter(
+            po["name"],
+            po["strength"],
+            po["perception"],
+            po["endurance"],
+            po["charisma"],
+            po["intelligence"],
+            po["agility"],
+            po["luck"],
+        )
         adv = db_fight_get_adversary_by_id_for_create(2, user_id)
-        self.pts = int(adv['pts'])
-        self.player_two = Fighter(adv['name'], adv['strength'], adv['perception'], adv['endurance'], adv['charisma'],
-                                  adv['intelligence'], adv['agility'], adv['luck'])
+        self.pts = int(adv["pts"])
+        self.player_two = Fighter(
+            adv["name"],
+            adv["strength"],
+            adv["perception"],
+            adv["endurance"],
+            adv["charisma"],
+            adv["intelligence"],
+            adv["agility"],
+            adv["luck"],
+        )
 
     def test_special(self):
         print(self.__class__.test_special.__name__)
@@ -73,5 +89,5 @@ class TestFighter(unittest.TestCase):
         print(atk_list)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

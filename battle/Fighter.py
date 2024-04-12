@@ -8,15 +8,39 @@ class Fighter:
     pv = 50  # pv for all?
     critical_rate = 0.75
 
-    def __init__(self, name, strength, perception, endurance, charisma, intelligence, agility, luck):
+    def __init__(
+        self,
+        name,
+        strength,
+        perception,
+        endurance,
+        charisma,
+        intelligence,
+        agility,
+        luck,
+    ):
         assert isinstance(name, str), "Attribut 'name': alphanumeric "
-        assert isinstance(strength, int) and 0 <= strength <= 20, "Attribut Strength : entier entre 1 et 20"
-        assert isinstance(perception, int) and 0 <= perception <= 20, "Attribut perception : entier entre 1 et 20"
-        assert isinstance(endurance, int) and 0 <= endurance <= 15, "Attribut Endurance entier entre 7 et 15"
-        assert isinstance(charisma, int) and 0 <= charisma <= 20, "Attribut charisma : entier entre 1 et 20"
-        assert isinstance(intelligence, int) and 0 <= intelligence <= 20, "Attribut intelligence : entier entre 1 et 20"
-        assert isinstance(agility, int) and 0 <= agility <= 20, "Attribut Agility: entier entre 1 et 20"
-        assert isinstance(luck, int) and 0 <= luck <= 20, "Attribut Lucky: entier entre 1 et 20"
+        assert (
+            isinstance(strength, int) and 0 <= strength <= 20
+        ), "Attribut Strength : entier entre 1 et 20"
+        assert (
+            isinstance(perception, int) and 0 <= perception <= 20
+        ), "Attribut perception : entier entre 1 et 20"
+        assert (
+            isinstance(endurance, int) and 0 <= endurance <= 15
+        ), "Attribut Endurance entier entre 7 et 15"
+        assert (
+            isinstance(charisma, int) and 0 <= charisma <= 20
+        ), "Attribut charisma : entier entre 1 et 20"
+        assert (
+            isinstance(intelligence, int) and 0 <= intelligence <= 20
+        ), "Attribut intelligence : entier entre 1 et 20"
+        assert (
+            isinstance(agility, int) and 0 <= agility <= 20
+        ), "Attribut Agility: entier entre 1 et 20"
+        assert (
+            isinstance(luck, int) and 0 <= luck <= 20
+        ), "Attribut Lucky: entier entre 1 et 20"
 
         self.name = name
         self.strength = strength  # force
@@ -28,8 +52,10 @@ class Fighter:
         self.luck = luck
 
     def special(self):
-        return f"name={self.name}, strength={self.strength}, perception={self.perception}, endurance={self.endurance}" \
-               f", charisma={self.charisma}, intelligence={self.intelligence}, agility={self.agility}, luck={self.luck}"
+        return (
+            f"name={self.name}, strength={self.strength}, perception={self.perception}, endurance={self.endurance}"
+            f", charisma={self.charisma}, intelligence={self.intelligence}, agility={self.agility}, luck={self.luck}"
+        )
 
     def touch_or_esquive(self, adversary):
         d20 = random.randint(1, 20)

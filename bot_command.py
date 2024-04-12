@@ -15,21 +15,24 @@ class BotCommand(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
 
-    @commands.command(name='qhelp', help="Aide pour la création d'une quote")
+    @commands.command(name="qhelp", help="Aide pour la création d'une quote")
     async def help_quote(self, ctx):
-        await ctx.reply('Créer une quote, easy! \n'
-                        'C\'est simple:  \n!qadd "le texte que tu veux enregistrer" "nom de la personne", '
-                        'ne pas oublier les "" \n '
-                        '!qadd "Appelle moi encore une fois ma princesse et tu vas devoir ramasser tes dents avec tes '
-                        'doigts cassés!" "Commandant Shepard ME1 <3 "\n '
-                        'Tu auras un petit message si c\'est bon.', mention_author=True)
+        await ctx.reply(
+            "Créer une quote, easy! \n"
+            'C\'est simple:  \n!qadd "le texte que tu veux enregistrer" "nom de la personne", '
+            'ne pas oublier les "" \n '
+            '!qadd "Appelle moi encore une fois ma princesse et tu vas devoir ramasser tes dents avec tes '
+            'doigts cassés!" "Commandant Shepard ME1 <3 "\n '
+            "Tu auras un petit message si c'est bon.",
+            mention_author=True,
+        )
 
-    @commands.command(name='qadd', help="Ajouter une quote")
+    @commands.command(name="qadd", help="Ajouter une quote")
     async def add_quote(self, ctx, quote, username):
         db_create_quote(username, quote)
-        await ctx.send(f'Quote ajouté !')
+        await ctx.send(f"Quote ajouté !")
 
-    @commands.command(name='qall', help="Voir toutes les quotes")
+    @commands.command(name="qall", help="Voir toutes les quotes")
     async def all_quote(self, ctx):
         quotes = db_get_quote()
         if quotes:
@@ -38,7 +41,7 @@ class BotCommand(commands.Cog):
         else:
             await ctx.send("C'est vide")
 
-    @commands.command(name='qr', help="Une quote aléatoire")
+    @commands.command(name="qr", help="Une quote aléatoire")
     async def random_quote(self, ctx):
         q = []
         quotes = db_get_quote()
@@ -55,18 +58,26 @@ class BotCommand(commands.Cog):
     async def on_message(self, message):
 
         if "superbot" in message.content.lower():
-            await message.reply(content=f"@{message.author.display_name}, {random.choice(botcommand)}",
-                                mention_author=True)
+            await message.reply(
+                content=f"@{message.author.display_name}, {random.choice(botcommand)}",
+                mention_author=True,
+            )
 
         elif "leilou dallas, multipass" in message.content.lower():
-            await message.reply(content="oui elle sait ce que c’est qu’un multipass.", mention_author=True)
+            await message.reply(
+                content="oui elle sait ce que c’est qu’un multipass.",
+                mention_author=True,
+            )
 
         elif "99!" in message.content.lower():
-            await message.reply(content=f"{random.choice(brooklyn_99_quotes)}",
-                                mention_author=True)
+            await message.reply(
+                content=f"{random.choice(brooklyn_99_quotes)}", mention_author=True
+            )
 
         elif "shepard" in message.content.lower():
-            await message.reply(content="<:incagay:710147834703511574>", mention_author=False)
+            await message.reply(
+                content="<:incagay:710147834703511574>", mention_author=False
+            )
 
 
 async def setup(bot):

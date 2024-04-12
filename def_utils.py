@@ -37,8 +37,8 @@ def user_exist():
 def member_details(ctx, member: discord.Member = None):
     if member is None:
         member = ctx.author
-    
-    print('member all')
+
+    print("member all")
     print("member.accent_colour")
     print(member.accent_colour)
     print("member.activities")
