@@ -21,7 +21,7 @@ class HelpBot(commands.Cog):
     async def help_commands(self, ctx):
         embed = discord.Embed(
             title="__Besoin d'aide ?!__",
-            description="*Pensez bien a préfixer les commandes pas un ! ( pas deux)*",
+            description="*Pensez bien a préfixer les commandes par un !  ( pas deux)*",
             color=discord.Colour.random(),
         )
         file = discord.File(f"asset/img/help.png", filename="help.png")
