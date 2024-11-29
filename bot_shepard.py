@@ -11,7 +11,7 @@ from def_utils import user_exist
 class CommandantShepard(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.test_chan = 860440689355259906
+        self.test_chan = 1031895034439675986
         self.prod_chan = 861613275414528030
 
     @commands.Cog.listener()
