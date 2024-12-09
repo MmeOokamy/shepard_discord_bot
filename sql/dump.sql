@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "fight_special" (
 );
 
 INSERT INTO "user" VALUES (1,'Ookamy',283935710858313730,0,0);
-INSERT INTO "user" VALUES (2,'Emmanuelle Ggt',686552959382847504,0,0);
+-- INSERT INTO "user" VALUES (2,'Emmanuelle Ggt',686552959382847504,0,0);
 INSERT INTO "fight_level" VALUES (1,1,'Inoffensif',3,50);
 INSERT INTO "fight_level" VALUES (2,2,'Novice',4,100);
 INSERT INTO "fight_level" VALUES (3,3,'Compétent',5,300);

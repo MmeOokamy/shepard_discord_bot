@@ -35,11 +35,10 @@ class BotBattle(commands.Cog):
         try:
             players = db_fight_podium()
 
-
             # Une petite vérification pour éviter l'erreur
-            if len(players) < 3:
-                logger.warning(f"Moins de 3 joueurs dans le podium. Nombre de joueurs : {len(players)}")
-                return
+            # if len(players) < 3:
+            #     logger.warning(f"Moins de 3 joueurs dans le podium. Nombre de joueurs : {len(players)}")
+            #     return
 
             # LE 1er
             embed = discord.Embed(
@@ -49,15 +48,17 @@ class BotBattle(commands.Cog):
             )
             file = discord.File(f"battle/img/rank.png", filename="rank.png")
             embed.set_thumbnail(url="attachment://rank.png")
-            # 2em
-            embed.add_field(
-                name=f"<:second_place:1028673709306826752> {players[1]['user']}",
-                value=f"xp : {players[1]['exp']}",
-                inline=True,
-            )
+
 
             # Correction de l'erreur de syntaxe précédente
-            if len(players) > 2:
+            if len(players) > 1:
+                # 2em
+                embed.add_field(
+                    name=f"<:second_place:1028673709306826752> {players[1]['user']}",
+                    value=f"xp : {players[1]['exp']}",
+                    inline=True,
+                )
+            if len(players) >= 2:
                 embed.add_field(
                     name=f"<:third_place:1028673799090098196> {players[2]['user']}",
                     value=f"xp : {players[2]['exp']}",
