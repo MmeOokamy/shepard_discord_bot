@@ -3,6 +3,10 @@ import sys
 import asyncio
 import random
 
+import logging
+from logging.handlers import RotatingFileHandler
+from settings_logs import setup_logging
+
 import discord
 from discord.ext import commands
 
@@ -10,6 +14,9 @@ from db import *  # sqlite execute fonction =)
 from def_utils import is_me  # fonction utile partout
 
 from dotenv import load_dotenv
+
+# Initialiser le logger
+logger = setup_logging()
 
 load_dotenv()
 PREFIX = os.getenv("PREFIX")
@@ -24,24 +31,31 @@ cog_files = ["bot_shepard", "bot_battle", "bot_command", "bot_games", "bot_help"
 
 async def load_extensions():
     for cog_file in cog_files:  # Cycle through the files in array
-        await bot.load_extension(cog_file)  # Load the file
-        print("%s has loaded." % cog_file)  # Print a success message.
-
+        try:
+            await bot.load_extension(cog_file)
+            logger.info(f"{cog_file} has loaded.")
+        except Exception as e:
+            logger.error(f"Failed to load {cog_file}: {e}")
 
 async def main():
+    logger.info("---Starting Bot Initialization---")
     async with bot:
-        print("---Load/Init DB---")
+        logger.info("---Load/Init DB---")
         try:
             db_connect()
-            print("Database OK")
+            logger.info("Database connection successful")
         except OSError as err:
-            print(f"OS error: {err}")
-            print(f"Unexpected error: {sys.exc_info()[0]}")
-        print("---Load Extensions---")
+            logger.error(f"Database connection error: {err}")
+            logger.error(f"Unexpected error: {sys.exc_info()[0]}")
+            sys.exit(1)
+        logger.info("---Load Extensions---")
         await load_extensions()
-        print("---Start Bot---")
+        logger.info("---Start Bot---")
         # TESTEURBOT  -  TOKEN
-        await bot.start(os.getenv("TOKEN"))
+        try:
+            await bot.start(os.getenv("TOKEN"))
+        except Exception as e:
+            logger.error(f"Bot start error: {e}")
 
 
 @bot.command(name="fait_dodo", hidden=True)
@@ -59,4 +73,10 @@ async def reload_proc(ctx):
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info("Bot stopped by keyboard interrupt")
+    except Exception as e:
+        logger.error(f"Unexpected error in main: {e}")
+    # asyncio.run(main())

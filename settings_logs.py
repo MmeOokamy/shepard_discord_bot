@@ -1,0 +1,35 @@
+import os
+import logging
+from logging.handlers import RotatingFileHandler
+
+
+
+def setup_logging():
+    # Créer le dossier logs s'il n'existe pas
+    os.makedirs('logs', exist_ok=True)
+
+    # Configuration du logger principal
+    logger = logging.getLogger('discord_bot')
+    logger.setLevel(logging.INFO)
+
+    # Logger de console
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+
+    # Logger de fichier avec rotation
+    file_handler = RotatingFileHandler(
+        'logs/discord_bot.log',
+        maxBytes=10*1024*1024,  # 10 Mo
+        backupCount=5
+    )
+    file_handler.setLevel(logging.INFO)
+    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_formatter)
+
+    # Ajouter les handlers
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    return logger
