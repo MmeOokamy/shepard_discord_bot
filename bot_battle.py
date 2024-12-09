@@ -3,6 +3,8 @@ import os
 import sys
 import asyncio
 import random
+import logging
+
 import discord
 from discord.ext import commands
 from battle.Fighter import Fighter
@@ -16,6 +18,8 @@ from battle.def_utils_battle import (
 )
 from battle.battle_buttons import *
 
+# Obtenir un logger spécifique pour ce module
+logger = logging.getLogger('discord_bot.battle')
 
 class BotBattle(commands.Cog):
     def __init__(self, bot):
@@ -28,33 +32,41 @@ class BotBattle(commands.Cog):
     @commands.command(name="podium", help="")
     @user_exist()
     async def fight_podium(self, ctx):
+        try:
+            players = db_fight_podium()
 
-        players = db_fight_podium()
-        # LE 1er
-        embed = discord.Embed(
-            title=f"<:first_place:1028672390403735574> {players[0]['user']}",
-            description=f"xp : {players[0]['exp']}",
-            color=discord.Colour.random(),
-        )
-        file = discord.File(f"battle/img/rank.png", filename="rank.png")
-        embed.set_thumbnail(url="attachment://rank.png")
-        # 2em
-        embed.add_field(
-            name=f"<:second_place:1028673709306826752> {players[1]['user']}",
-            value=f"xp : {players[1]['exp']}",
-            inline=True,
-        )
-        # 3eme
-        if len(player) <= 2 :
+
+            # Une petite vérification pour éviter l'erreur
+            if len(players) < 3:
+                logger.warning(f"Moins de 3 joueurs dans le podium. Nombre de joueurs : {len(players)}")
+                return
+
+            # LE 1er
+            embed = discord.Embed(
+                title=f"<:first_place:1028672390403735574> {players[0]['user']}",
+                description=f"xp : {players[0]['exp']}",
+                color=discord.Colour.random(),
+            )
+            file = discord.File(f"battle/img/rank.png", filename="rank.png")
+            embed.set_thumbnail(url="attachment://rank.png")
+            # 2em
             embed.add_field(
-                name=f"<:third_place:1028673799090098196> {players[2]['user']}",
-                value=f"xp : {players[2]['exp']}",
+                name=f"<:second_place:1028673709306826752> {players[1]['user']}",
+                value=f"xp : {players[1]['exp']}",
                 inline=True,
             )
-        # les autre
-        # embed.set_footer(text=f"")
 
-        await ctx.send(file=file, embed=embed)
+            # Correction de l'erreur de syntaxe précédente
+            if len(players) > 2:
+                embed.add_field(
+                    name=f"<:third_place:1028673799090098196> {players[2]['user']}",
+                    value=f"xp : {players[2]['exp']}",
+                    inline=True,
+                )
+            await ctx.send(file=file, embed=embed)
+            logger.info(f"Podium généré pour {ctx.author}")
+        except Exception as e:
+            logger.error(f"Erreur lors de la génération du podium : {e}")
 
     @commands.command(name="player_stat", help="Stats des membres")
     @user_exist()
@@ -314,4 +326,9 @@ class BotBattle(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(BotBattle(bot))
+    try:
+        await bot.add_cog(BotBattle(bot))
+        logger.info("Module BotBattle ajouté avec succès")
+    except Exception as e:
+        logger.error(f"Erreur lors de l'ajout du module BotBattle : {e}")
+
