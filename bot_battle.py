@@ -28,18 +28,7 @@ class BotBattle(commands.Cog):
     @commands.command(name="podium", help="")
     @user_exist()
     async def fight_podium(self, ctx):
-        # [
-        #     {
-        #         'user': 'Aldra',
-        #         'partie_gagne': 1, 'exp': 3, 'niveau': 1,
-        #         'force': 3, 'perception': 2, 'endurance': 3, 'charisme': 2, 'intelligence': 2, 'agility': 3, 'luck': 2
-        #     },
-        #     {
-        #         'user': 'Ookamy',
-        #         'partie_gagne': 0, 'exp': 0, 'niveau': 1,
-        #         'force': 3, 'perception': 2, 'endurance': 3, 'charisme': 2, 'intelligence': 2, 'agility': 3, 'luck': 2
-        #     }
-        # ]
+
         players = db_fight_podium()
         # LE 1er
         embed = discord.Embed(
@@ -56,11 +45,12 @@ class BotBattle(commands.Cog):
             inline=True,
         )
         # 3eme
-        embed.add_field(
-            name=f"<:third_place:1028673799090098196> {players[2]['user']}",
-            value=f"xp : {players[2]['exp']}",
-            inline=True,
-        )
+        if len(player) <= 2 :
+            embed.add_field(
+                name=f"<:third_place:1028673799090098196> {players[2]['user']}",
+                value=f"xp : {players[2]['exp']}",
+                inline=True,
+            )
         # les autre
         # embed.set_footer(text=f"")
 
