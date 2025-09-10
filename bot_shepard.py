@@ -29,7 +29,7 @@ class CommandantShepard(commands.Cog):
     @is_me()
     async def status(self, ctx):
         aequilibris = check_service_status("aequilibris.service")
-        iot = check_service_status("monitoring.service")
+        iot = check_service_status("monitoring_app.service")
 
         response = f"""
         Aequilibris -> {aequilibris} 
