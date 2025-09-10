@@ -36,7 +36,7 @@ class BotGames(commands.Cog):
             return m.author == ctx.author and m.content.isdigit()
 
         try:
-            guess = await self.bot.wait_for("message", check=is_correct, timeout=10.0)
+            guess = await self.bot.wait_for("message", check=is_correct, timeout=15.0)
         except asyncio.TimeoutError:
             await ctx.reply(
                 "Dommage tu as mis du temps a répondre :worried:", mention_author=True

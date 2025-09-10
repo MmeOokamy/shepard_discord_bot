@@ -1,12 +1,12 @@
 # coding: utf-8
 import os
 import sys
+import subprocess
 import asyncio
 import discord
 from discord.ext import commands
 from db import *  # sqlite execute fonction =)
 from dotenv import load_dotenv
-
 load_dotenv()
 
 
@@ -115,3 +115,20 @@ def member_details(ctx, member: discord.Member = None):
     print(member.voice)
     print("member.web_status")
     print(member.web_status)
+
+
+
+def check_service_status(service_name):
+    """Vérifie l'état d'un service systemd."""
+    try:
+        # Exécute la commande systemctl
+        result = subprocess.run(
+            ["systemctl", "is-active", service_name],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        # Retourne True si le service est actif
+        return result.stdout.strip() == "active"
+    except Exception as e:
+        return {"error": str(e)}
