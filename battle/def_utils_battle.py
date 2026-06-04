@@ -16,14 +16,6 @@ def special_txt(player):
     )
 
 
-def embed_stats(user_id):
-    user = db_fight_get_stats_by_user(user_id)
-    embed = discord.Embed(description=f"", color=discord.Colour.random())
-    embed.set_author(name=f"")
-    embed.add_field(name="S.P.E.C.I.A.L", value=f"")
-    return embed
-
-
 def embed_one(player, color, race):
     embed = discord.Embed(description=f"", color=color)
     embed.set_author(name=f"{player.name} ({race})")

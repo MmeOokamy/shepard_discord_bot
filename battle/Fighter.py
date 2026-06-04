@@ -3,9 +3,6 @@ import random
 
 
 class Fighter:
-    alive = True
-    heal = 2
-    pv = 50  # pv for all?
     critical_rate = 0.75
 
     def __init__(
@@ -19,6 +16,9 @@ class Fighter:
         agility,
         luck,
     ):
+        self.alive = True
+        self.heal = 2
+        self.pv = 50
         assert isinstance(name, str), "Attribut 'name': alphanumeric "
         assert (
             isinstance(strength, int) and 0 <= strength <= 20

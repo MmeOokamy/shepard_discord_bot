@@ -1,5 +1,4 @@
 # coding: utf-8
-from unicodedata import name
 import discord
 from discord.ui import View, Button
 from discord.ext import commands
@@ -28,12 +27,12 @@ class CommandantShepard(commands.Cog):
     @commands.command(name="status", help="Voir l'état du serveur.")
     @is_me()
     async def status(self, ctx):
-        aequilibris = check_service_status("aequilibris.service")
-        iot = check_service_status("monitoring_app.service")
+        # aequilibris = check_service_status("aequilibris.service")
+        # iot = check_service_status("monitoring_app.service")
 
         response = f"""
-        Aequilibris -> {aequilibris} 
-        IOT         -> {iot}  <3
+        Aequilibris -> 
+        IOT         ->  <3
         """
         await ctx.reply(response)
 

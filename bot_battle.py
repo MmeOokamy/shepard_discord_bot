@@ -58,7 +58,7 @@ class BotBattle(commands.Cog):
                     value=f"xp : {players[1]['exp']}",
                     inline=True,
                 )
-            if len(players) >= 2:
+            if len(players) > 2:
                 embed.add_field(
                     name=f"<:third_place:1028673799090098196> {players[2]['user']}",
                     value=f"xp : {players[2]['exp']}",

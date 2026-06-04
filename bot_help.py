@@ -1,5 +1,4 @@
 # coding: utf-8
-from unicodedata import name
 import discord
 from discord.ui import View, Button
 from discord.ext import commands
@@ -16,7 +15,7 @@ class HelpBot(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
 
-    @commands.command(name="help", Hidden=True)
+    @commands.command(name="help", hidden=True)
     @user_exist()
     async def help_commands(self, ctx):
         embed = discord.Embed(
