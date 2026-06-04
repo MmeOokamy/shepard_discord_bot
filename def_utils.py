@@ -46,5 +46,5 @@ def check_service_status(service_name):
         )
         # Retourne True si le service est actif
         return result.stdout.strip() == "active"
-    except Exception as e:
-        return {"error": str(e)}
+    except Exception:
+        return False

@@ -59,13 +59,12 @@ class Fighter:
 
     def touch_or_esquive(self, adversary):
         d20 = random.randint(1, 20)
-        atk = (d20 * self.strength) / self.agility
-        adv = (adversary.endurance * adversary.perception) / adversary.luck
-        toe = True if atk >= adv else False
-        return toe
+        atk = (d20 * self.strength) / max(1, self.agility)
+        adv = (adversary.endurance * adversary.perception) / max(1, adversary.luck)
+        return atk >= adv
 
     def is_critical(self):
-        return True if random.randint(1, (self.luck + self.agility)) == 1 else False
+        return random.randint(1, max(1, self.luck + self.agility)) == 1
 
     def critical_attack(self, atk=0):
         if atk == 0:
