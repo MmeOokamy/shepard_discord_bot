@@ -35,10 +35,9 @@ class BotBattle(commands.Cog):
         try:
             players = db_fight_podium()
 
-            # Une petite vérification pour éviter l'erreur
-            # if len(players) < 3:
-            #     logger.warning(f"Moins de 3 joueurs dans le podium. Nombre de joueurs : {len(players)}")
-            #     return
+            if not players:
+                await ctx.send("Pas encore de joueurs au podium !")
+                return
 
             # LE 1er
             embed = discord.Embed(

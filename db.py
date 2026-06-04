@@ -173,7 +173,7 @@ def db_fight_level_get_xp_if_win(lvl):
     lvl_xp = c.execute(
         "SELECT pts FROM fight_level WHERE lvl = ?", (lvl,)
     ).fetchone()
-    return lvl_xp["pts"]
+    return lvl_xp["pts"] if lvl_xp else 0
 
 
 ###################
