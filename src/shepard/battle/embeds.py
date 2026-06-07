@@ -52,9 +52,9 @@ def embed_atk(step, atk_a, atk_b, rip_a, rip_b, result):
     return embed
 
 
-def embed_user(ctx):
-    special = db_fight_get_user_special_for_create_fighter(ctx.author.id)
-    xlw = db_fight_get_user_xp_lvl(ctx.author.id)
+async def embed_user(ctx):
+    special = await db_fight_get_user_special_for_create_fighter(ctx.author.id)
+    xlw = await db_fight_get_user_xp_lvl(ctx.author.id)
     avatar = ctx.author.display_avatar
     embed = discord.Embed(
         description=f">>> Niv.{xlw['lvl']}/Vic.{xlw['win']}/Exp.{xlw['xp']}",
@@ -75,10 +75,10 @@ def embed_user(ctx):
     return embed
 
 
-def embed_adv(ctx, adv_id):
-    adv = db_fight_get_adversary_by_id(adv_id)
+async def embed_adv(ctx, adv_id):
+    adv = await db_fight_get_adversary_by_id(adv_id)
     colors = ("", 0x1ABC9C, 0xE91E63, 0xF1C40F, 0xE74C3C)
-    special = db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
+    special = await db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
     file = discord.File(img_path(adv["img"]), filename=adv["img"])
     img = f"attachment://{adv['img']}"
     embed = discord.Embed(
@@ -101,13 +101,13 @@ def embed_adv(ctx, adv_id):
     return file_embed
 
 
-def embed_advs(ctx):
-    adv_list = db_fight_get_adversary()
+async def embed_advs(ctx):
+    adv_list = await db_fight_get_adversary()
     embeds = []
     files = []
     colors = ("", 0x1ABC9C, 0xE91E63, 0xF1C40F, 0xE74C3C)
     for adv in adv_list:
-        special = db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
+        special = await db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
         file = discord.File(img_path(adv["img"]), filename=adv["img"])
         files.append(file)
         img = f"attachment://{adv['img']}"

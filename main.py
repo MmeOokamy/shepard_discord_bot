@@ -7,10 +7,11 @@ import asyncio
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 
 from shepard.config import PREFIX, TOKEN, GUILD_ID
-from shepard.core.database import db_connect
+from shepard.core.database import connect, close
 from shepard.core.checks import is_me
 from shepard.core.logging_setup import setup_logging
 
@@ -65,11 +66,10 @@ async def main():
     async with bot:
         logger.info("---Load/Init DB---")
         try:
-            db_connect()
+            await connect()
             logger.info("Database connection successful")
-        except OSError as err:
+        except Exception as err:
             logger.error(f"Database connection error: {err}")
-            logger.error(f"Unexpected error: {sys.exc_info()[0]}")
             sys.exit(1)
         logger.info("---Load Extensions---")
         await load_extensions()
@@ -78,6 +78,50 @@ async def main():
             await bot.start(TOKEN)
         except Exception as e:
             logger.error(f"Bot start error: {e}")
+        finally:
+            await close()
+
+
+# ------------------------------------------------------------------ #
+#  Gestionnaires d'erreurs globaux                                   #
+# ------------------------------------------------------------------ #
+@bot.event
+async def on_command_error(ctx, error):
+    """Erreurs des commandes prefix / hybrides (filet de sécurité global)."""
+    if isinstance(error, commands.CommandNotFound):
+        return
+    # laisser les handlers spécifiques (cog ou commande) gérer leurs propres erreurs
+    if (ctx.command and ctx.command.has_error_handler()) or (
+        ctx.cog and ctx.cog.has_error_handler()
+    ):
+        return
+
+    error = getattr(error, "original", error)
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("⛔ Tu n'as pas le droit d'utiliser cette commande.", delete_after=8)
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"❓ Argument manquant : `{error.param.name}`.", delete_after=8)
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("❓ Argument invalide.", delete_after=8)
+    else:
+        logger.error(f"Erreur dans la commande {ctx.command} : {error}", exc_info=error)
+
+
+@bot.tree.error
+async def on_app_command_error(interaction, error):
+    """Erreurs des slash commands pures (filet de sécurité)."""
+    if isinstance(error, app_commands.CheckFailure):
+        msg = "⛔ Tu n'as pas le droit d'utiliser cette commande."
+    else:
+        msg = "⛔ Une erreur est survenue."
+        logger.error(f"Erreur slash command : {error}", exc_info=error)
+    try:
+        if interaction.response.is_done():
+            await interaction.followup.send(msg, ephemeral=True)
+        else:
+            await interaction.response.send_message(msg, ephemeral=True)
+    except discord.HTTPException:
+        pass
 
 
 @bot.command(name="fait_dodo", hidden=True)

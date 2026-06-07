@@ -111,6 +111,8 @@ class Moderation(commands.Cog):
         amount="Nombre de messages à supprimer",
         channel="Salon ciblé (par défaut : le salon courant)",
     )
+    @app_commands.default_permissions(manage_messages=True)
+    @app_commands.guild_only()
     @is_me()
     async def clear(self, ctx, amount: int, channel: discord.TextChannel = None):
         if amount < 1:
@@ -147,6 +149,8 @@ class Moderation(commands.Cog):
         amount="Nombre maximum de messages à supprimer",
         channel="Salon ciblé (par défaut : le salon courant)",
     )
+    @app_commands.default_permissions(manage_messages=True)
+    @app_commands.guild_only()
     @is_me()
     async def clear_user(
         self, ctx, member: discord.Member, amount: int = 50, channel: discord.TextChannel = None
@@ -212,6 +216,8 @@ class Moderation(commands.Cog):
         description="Vide entièrement un salon (méthode au choix : clone ou purge).",
     )
     @app_commands.describe(channel="Salon à vider (par défaut : le salon courant)")
+    @app_commands.default_permissions(manage_messages=True)
+    @app_commands.guild_only()
     @is_me()
     async def clearall(self, ctx, channel: discord.TextChannel = None):
         target = channel or ctx.channel
@@ -272,6 +278,8 @@ class Moderation(commands.Cog):
         description="Supprime un message précis (par ID, ou en répondant au message en prefix).",
     )
     @app_commands.describe(message_id="ID du message à supprimer")
+    @app_commands.default_permissions(manage_messages=True)
+    @app_commands.guild_only()
     @is_me()
     @commands.bot_has_permissions(manage_messages=True)
     async def delmsg(self, ctx, message_id: str = None):
@@ -304,6 +312,8 @@ class Moderation(commands.Cog):
         description="Supprime un salon (le salon courant si non précisé). Confirmation requise.",
     )
     @app_commands.describe(channel="Salon à supprimer (par défaut : le salon courant)")
+    @app_commands.default_permissions(manage_channels=True)
+    @app_commands.guild_only()
     @is_me()
     @commands.bot_has_permissions(manage_channels=True)
     async def delchannel(self, ctx, channel: discord.TextChannel = None):

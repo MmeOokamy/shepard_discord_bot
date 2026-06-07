@@ -1,6 +1,6 @@
 # coding: utf-8
 """Requêtes du Fight Club (joueurs, adversaires, S.P.E.C.I.A.L, scores)."""
-from shepard.core.database import db, c
+from shepard.core.database import execute, fetchall, fetchone
 
 LVL_PTS = {
     1: 0,
@@ -23,8 +23,8 @@ def _add_stat(a, b):
 ###################
 #  users/players  #
 ###################
-def db_fight_podium():
-    return c.execute(
+async def db_fight_podium():
+    return await fetchall(
         """
         SELECT u.user as user, fp.win AS partie_gagne, fp.xp as exp, fp.lvl as niveau,
         fp.strength + fs.strength AS force, fp.perception + fs.perception AS perception,
@@ -36,11 +36,11 @@ def db_fight_podium():
         JOIN fight_special fs ON fp.lvl = fs.lvl
         ORDER BY fp.win DESC, fp.xp DESC, fp.lvl DESC
         """
-    ).fetchall()
+    )
 
 
-def db_fight_user_detail(player_id):
-    return c.execute(
+async def db_fight_user_detail(player_id):
+    return await fetchone(
         """
         SELECT u.user as user, fp.win AS partie_gagne, fp.xp as xp, fp.lvl as niveau,
         fp.strength + fs.strength AS strength, fp.perception + fs.perception AS perception,
@@ -53,14 +53,14 @@ def db_fight_user_detail(player_id):
         WHERE u.user_id = ?
         """,
         (int(player_id),),
-    ).fetchone()
+    )
 
 
 ###################
 #   user/player   #
 ###################
-def db_fight_get_stats_by_user(user_id):
-    return c.execute(
+async def db_fight_get_stats_by_user(user_id):
+    return await fetchone(
         """
         SELECT u.user as name,
                fp.win as win, fp.loose as loose, fp.xp as xp,
@@ -71,11 +71,11 @@ def db_fight_get_stats_by_user(user_id):
         WHERE u.user_id = ?
         """,
         (user_id,),
-    ).fetchone()
+    )
 
 
-def db_fight_get_user_special(user_id):
-    return c.execute(
+async def db_fight_get_user_special(user_id):
+    return await fetchone(
         """
         SELECT u.user AS name,
             fu.strength AS strength, fu.perception AS perception,
@@ -87,67 +87,59 @@ def db_fight_get_user_special(user_id):
         WHERE u.user_id = ?
         """,
         (user_id,),
-    ).fetchone()
+    )
 
 
 ###################
 #      STATS      #
 ###################
-def db_fight_get_user_xp_lvl(user_id):
-    return c.execute(
+async def db_fight_get_user_xp_lvl(user_id):
+    return await fetchone(
         "SELECT xp, lvl, win FROM fight_player WHERE user_id = ?",
         (user_id,),
-    ).fetchone()
+    )
 
 
-def db_fight_get_level():
-    return c.execute("SELECT * FROM fight_level ORDER BY lvl ASC").fetchall()
+async def db_fight_get_level():
+    return await fetchall("SELECT * FROM fight_level ORDER BY lvl ASC")
 
 
-def db_fight_get_level_by_lvl(lvl):
-    return c.execute(
-        "SELECT * FROM fight_level WHERE lvl = ?", (lvl,)
-    ).fetchone()
+async def db_fight_get_level_by_lvl(lvl):
+    return await fetchone("SELECT * FROM fight_level WHERE lvl = ?", (lvl,))
 
 
-def db_fight_level_get_xp_if_win(lvl):
-    lvl_xp = c.execute(
-        "SELECT pts FROM fight_level WHERE lvl = ?", (lvl,)
-    ).fetchone()
+async def db_fight_level_get_xp_if_win(lvl):
+    lvl_xp = await fetchone("SELECT pts FROM fight_level WHERE lvl = ?", (lvl,))
     return lvl_xp["pts"] if lvl_xp else 0
 
 
 ###################
 #   Adversaires   #
 ###################
-def db_fight_get_adversary():
-    return c.execute("SELECT * FROM fight_adversary ORDER BY id ASC").fetchall()
+async def db_fight_get_adversary():
+    return await fetchall("SELECT * FROM fight_adversary ORDER BY id ASC")
 
 
-def db_fight_get_adversary_by_id(adv_id):
-    return c.execute(
-        "SELECT * FROM fight_adversary WHERE id = ?", (adv_id,)
-    ).fetchone()
+async def db_fight_get_adversary_by_id(adv_id):
+    return await fetchone("SELECT * FROM fight_adversary WHERE id = ?", (adv_id,))
 
 
 ###################
 #  S.P.E.C.I.A.L  #
 ###################
-def db_fight_get_special():
+async def db_fight_get_special():
     """Donne les informations de la table fight_special"""
-    return c.execute("SELECT * FROM fight_special").fetchall()
+    return await fetchall("SELECT * FROM fight_special")
 
 
-def db_fight_get_special_by_lvl(lvl):
+async def db_fight_get_special_by_lvl(lvl):
     """Donne le detail du special en fonction du lvl"""
-    return c.execute(
-        "SELECT * FROM fight_special WHERE lvl = ?", (lvl,)
-    ).fetchone()
+    return await fetchone("SELECT * FROM fight_special WHERE lvl = ?", (lvl,))
 
 
-def db_fight_get_special_by_user(user_id):
+async def db_fight_get_special_by_user(user_id):
     """Donne le special d'un membre"""
-    return c.execute(
+    return await fetchone(
         """
         SELECT fs.strength AS strength, fs.perception AS perception,
                 fs.endurance AS endurance, fs.charisma AS charisma,
@@ -158,10 +150,10 @@ def db_fight_get_special_by_user(user_id):
         WHERE fp.user_id = ?
         """,
         (user_id,),
-    ).fetchone()
+    )
 
 
-def db_fight_special_add_pts(
+async def db_fight_special_add_pts(
     user_id,
     strength=0,
     perception=0,
@@ -172,7 +164,7 @@ def db_fight_special_add_pts(
     luck=0,
 ):
     """Fonction pour mettre à jour le SPECIAL du joueur"""
-    c.execute(
+    await execute(
         """
         UPDATE fight_player
         SET strength = strength + ?,
@@ -186,13 +178,16 @@ def db_fight_special_add_pts(
         """,
         (strength, perception, endurance, charisma, intelligence, agility, luck, int(user_id)),
     )
-    db.commit()
 
 
-def db_fight_get_special_total(user_id, adv_id=0):
+async def db_fight_get_special_total(user_id, adv_id=0):
     """Donne le special du member ou de l'adversaire par rapport au niveau du member"""
-    special = db_fight_get_special_by_user(user_id)
-    player = db_fight_get_user_special(user_id) if adv_id == 0 else db_fight_get_adversary_by_id(adv_id)
+    special = await db_fight_get_special_by_user(user_id)
+    player = (
+        await db_fight_get_user_special(user_id)
+        if adv_id == 0
+        else await db_fight_get_adversary_by_id(adv_id)
+    )
 
     return {
         "name": player["name"],
@@ -207,10 +202,10 @@ def db_fight_get_special_total(user_id, adv_id=0):
     }
 
 
-def db_fight_get_user_special_for_create_fighter(user_id):
+async def db_fight_get_user_special_for_create_fighter(user_id):
     """Donne les informations calculées pour la création de l'objet Fighter"""
-    user = db_fight_get_user_special(user_id)
-    special = db_fight_get_special_by_lvl(user["lvl"])
+    user = await db_fight_get_user_special(user_id)
+    special = await db_fight_get_special_by_lvl(user["lvl"])
 
     return {
         "name": user["name"],
@@ -226,11 +221,11 @@ def db_fight_get_user_special_for_create_fighter(user_id):
     }
 
 
-def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
-    adv_select = db_fight_get_adversary_by_id(adv_id)
-    user_lvl = db_fight_get_user_xp_lvl(user_id)
-    special = db_fight_get_special_by_lvl(user_lvl["lvl"])
-    pts = db_fight_level_get_xp_if_win(user_lvl["lvl"])
+async def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
+    adv_select = await db_fight_get_adversary_by_id(adv_id)
+    user_lvl = await db_fight_get_user_xp_lvl(user_id)
+    special = await db_fight_get_special_by_lvl(user_lvl["lvl"])
+    pts = await db_fight_level_get_xp_if_win(user_lvl["lvl"])
 
     return {
         "name": adv_select["name"],
@@ -250,17 +245,15 @@ def db_fight_get_adversary_by_id_for_create(adv_id, user_id):
 ###################
 #      SCORES     #
 ###################
-def db_fight_win(user_id, xp=0):
-    c.execute(
+async def db_fight_win(user_id, xp=0):
+    await execute(
         "UPDATE fight_player SET win = win + 1, xp = xp + ? WHERE user_id = ?",
         (xp, user_id),
     )
-    db.commit()
 
 
-def db_fight_loose(user_id):
-    c.execute(
+async def db_fight_loose(user_id):
+    await execute(
         "UPDATE fight_player SET loose = loose + 1 WHERE user_id = ?",
         (user_id,),
     )
-    db.commit()

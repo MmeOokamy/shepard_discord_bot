@@ -1,6 +1,5 @@
 # coding: utf-8
 """Décorateurs de vérification pour les commandes."""
-import discord
 from discord.ext import commands
 
 from shepard.config import ADMIN_ID
@@ -17,12 +16,10 @@ def is_me():
 
 def user_exist():
     """Crée l'utilisateur en base à la première utilisation si besoin."""
-    def exist(ctx, member: discord.Member = None):
-        if member is None:
-            member = ctx.author
-        if db_user_exist(ctx.message.author.id) is False:
-            db_user_create(ctx.message.author.id, member.display_name)
+    async def exist(ctx):
+        if await db_user_exist(ctx.message.author.id) is False:
+            await db_user_create(ctx.message.author.id, ctx.author.display_name)
 
-        return db_user_exist(ctx.message.author.id)
+        return await db_user_exist(ctx.message.author.id)
 
     return commands.check(exist)

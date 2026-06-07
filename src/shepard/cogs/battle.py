@@ -20,6 +20,7 @@ from shepard.battle.views import (
     FightAdversary,
     FightChoices,
     FightMenu,
+    load_adversaries,
 )
 from shepard.db.fight import (
     db_fight_podium,
@@ -46,7 +47,7 @@ class BotBattle(commands.Cog):
     @user_exist()
     async def fight_podium(self, ctx):
         try:
-            players = db_fight_podium()
+            players = await db_fight_podium()
 
             if not players:
                 await ctx.send("Pas encore de joueurs au podium !")
@@ -87,7 +88,7 @@ class BotBattle(commands.Cog):
         if member is None:
             member = ctx.author
         # information member
-        player = db_fight_user_detail(int(member.id))
+        player = await db_fight_user_detail(int(member.id))
 
         # Embed
         embed = discord.Embed(
@@ -111,7 +112,7 @@ class BotBattle(commands.Cog):
     @commands.command(name="stats", help="Tes stats du Fight Club")
     @user_exist()
     async def fight_stats(self, ctx):
-        user = db_fight_get_stats_by_user(ctx.author.id)
+        user = await db_fight_get_stats_by_user(ctx.author.id)
         await ctx.reply(
             f"Salut {ctx.author}, \n"
             f"tu es niveau {user['lvl']} \n"
@@ -124,7 +125,7 @@ class BotBattle(commands.Cog):
     @commands.command(name="battle", help="Fight Club version évolué")
     @user_exist()
     async def battle_game(self, ctx):
-        user = db_fight_get_stats_by_user(ctx.author.id)
+        user = await db_fight_get_stats_by_user(ctx.author.id)
 
         # Fonction utils
         async def status_fighter(player, two):
@@ -211,7 +212,7 @@ class BotBattle(commands.Cog):
 
         if view_fs.value is True:
             # selection de l'adversaire
-            e = embed_advs(ctx)
+            e = await embed_advs(ctx)
             files, embeds = e["files"], e["embeds"]
             await ctx.send(files=files, embeds=embeds, delete_after=10)
             view = FightAdversary(ctx)
@@ -224,7 +225,7 @@ class BotBattle(commands.Cog):
                 f"**Bienvenue dans l'arène, en ce jour glorieux, deux adversaires s'affrontent !**"
             )
             # Player_one : user
-            po = db_fight_get_user_special_for_create_fighter(ctx.author.id)
+            po = await db_fight_get_user_special_for_create_fighter(ctx.author.id)
             # print(po)
             player_one = Fighter(
                 po["name"],
@@ -241,9 +242,9 @@ class BotBattle(commands.Cog):
             # Player_two : adversaire
             if adv_id == 0:
                 adv_id = random.randint(1, 4)
-            e = embed_adv(ctx, adv_id)
+            e = await embed_adv(ctx, adv_id)
             file, embed = e["file"], e["embed"]
-            adv = db_fight_get_adversary_by_id_for_create(adv_id, ctx.author.id)
+            adv = await db_fight_get_adversary_by_id_for_create(adv_id, ctx.author.id)
             # {'name': 'Grunt', 'lvl': 1, 'strength': 4, 'perception': 1, 'endurance': 4, 'charisma': 1,
             # 'intelligence': 0, 'agility': 1, 'luck': 1, 'race': 'Krogan', 'pts': 3}
             pts = int(adv["pts"])
@@ -259,7 +260,7 @@ class BotBattle(commands.Cog):
             )
 
             # Embed des combattants
-            await ctx.send(f"Dans le coin IRL : \n", embed=embed_user(ctx))
+            await ctx.send(f"Dans le coin IRL : \n", embed=await embed_user(ctx))
             await ctx.send(f"Dans le coin Virtuel : \n", file=file, embed=embed)
             await ctx.send("**🥊 !! 🥊 FIGHT 🥊 !! 🥊**")
 
@@ -289,11 +290,11 @@ class BotBattle(commands.Cog):
             else:
                 # Player one mort
                 if not player_one.alive:
-                    db_fight_loose(ctx.author.id)
+                    await db_fight_loose(ctx.author.id)
                     await ctx.send(f"{player_two.name} est le grand gagnant :muscle:!")
                 # Player one win
                 elif not player_two.alive:
-                    db_fight_win(ctx.author.id, pts)
+                    await db_fight_win(ctx.author.id, pts)
                     await ctx.send(
                         f"{player_one.name} gagne contre {player_two.name} :muscle:!"
                     )
@@ -312,7 +313,7 @@ class BotBattle(commands.Cog):
     @commands.command(name="adv", hidden=True)
     @user_exist()
     async def fight_adv_embed(self, ctx):
-        e = embed_advs(ctx)
+        e = await embed_advs(ctx)
         files, embeds = e["files"], e["embeds"]
         await ctx.send(files=files, embeds=embeds, delete_after=40)
 
@@ -324,7 +325,7 @@ class BotBattle(commands.Cog):
         await ctx.send("Choisi ton adversaire !", view=view)
         await view.wait()
         print(view.value)
-        e = embed_adv(ctx, view.value)
+        e = await embed_adv(ctx, view.value)
         file, embed = e["file"], e["embed"]
         await ctx.send(file=file, embed=embed)
 
@@ -340,6 +341,7 @@ class BotBattle(commands.Cog):
 
 async def setup(bot):
     try:
+        await load_adversaries()  # met en cache la liste des adversaires (pour FightAdversary)
         await bot.add_cog(BotBattle(bot))
         logger.info("Module BotBattle ajouté avec succès")
     except Exception as e:

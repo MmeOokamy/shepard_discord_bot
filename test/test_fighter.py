@@ -5,20 +5,19 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from shepard.battle.fighter import Fighter
+from shepard.core.database import connect, close
 from shepard.db.fight import (
     db_fight_get_user_special_for_create_fighter,
     db_fight_get_adversary_by_id_for_create,
 )
 
 
-class TestFighter(unittest.TestCase):
+class TestFighter(unittest.IsolatedAsyncioTestCase):
 
-    def setUp(self):
-        # self.player_one = create_fighter('Shepard commander')
-        # self.player_two = create_fighter('Grunt')
-        # Player Two Bot
+    async def asyncSetUp(self):
+        await connect()
         user_id = int(os.getenv("ADMIN_ID"))
-        po = db_fight_get_user_special_for_create_fighter(user_id)
+        po = await db_fight_get_user_special_for_create_fighter(user_id)
         self.player_one = Fighter(
             po["name"],
             po["strength"],
@@ -29,7 +28,7 @@ class TestFighter(unittest.TestCase):
             po["agility"],
             po["luck"],
         )
-        adv = db_fight_get_adversary_by_id_for_create(2, user_id)
+        adv = await db_fight_get_adversary_by_id_for_create(2, user_id)
         self.pts = int(adv["pts"])
         self.player_two = Fighter(
             adv["name"],
@@ -41,6 +40,9 @@ class TestFighter(unittest.TestCase):
             adv["agility"],
             adv["luck"],
         )
+
+    async def asyncTearDown(self):
+        await close()
 
     def test_special(self):
         print(self.__class__.test_special.__name__)

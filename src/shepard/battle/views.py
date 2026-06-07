@@ -91,64 +91,59 @@ class FightStart(discord.ui.View):
             return True
 
 
+# Liste des adversaires, chargée au démarrage (cf. load_adversaries)
+ADVERSARIES = []
+
+
+async def load_adversaries():
+    """Charge les adversaires en mémoire (appelé une fois au démarrage du bot)."""
+    global ADVERSARIES
+    ADVERSARIES = await db_fight_get_adversary()
+
+
+class AdvButton(discord.ui.Button):
+    """Bouton de sélection d'un adversaire (value = id, 0 = aléatoire)."""
+
+    def __init__(self, value, label, style, emoji):
+        super().__init__(label=label, style=style, emoji=emoji)
+        self.value = value
+
+    async def callback(self, interaction):
+        view = self.view
+        view.value = self.value
+        await interaction.response.edit_message(
+            content=f"Merci d'accueillir :  {self.emoji}", view=None
+        )
+        view.stop()
+
+
 class FightAdversary(discord.ui.View):
+    emoji = ("❓", "🧸", "👿", "⚔", "☣")
+    styles = (
+        discord.ButtonStyle.blurple,
+        discord.ButtonStyle.gray,
+        discord.ButtonStyle.green,
+        discord.ButtonStyle.red,
+    )
+
     def __init__(self, ctx):
         super().__init__()
         self.value = None
         self.ctx = ctx
-
-    emoji = ("❓", "🧸", "👿", "⚔", "☣")
-    advs = db_fight_get_adversary()
-
-    @discord.ui.button(
-        label=f"Aléatoire", style=discord.ButtonStyle.blurple, emoji=emoji[0]
-    )
-    async def adv_random(self, interaction, button):
-        await interaction.response.edit_message(
-            content=f"Merci d'accueillir :  {self.emoji[0]}", view=None
+        # bouton "Aléatoire" (value 0)
+        self.add_item(
+            AdvButton(0, "Aléatoire", discord.ButtonStyle.blurple, self.emoji[0])
         )
-        self.value = 0
-        self.stop()
-
-    @discord.ui.button(
-        label=f"{advs[0]['name']}", style=discord.ButtonStyle.blurple, emoji=emoji[1]
-    )
-    async def adv_one(self, interaction, button):
-        await interaction.response.edit_message(
-            content=f"Merci d'accueillir :  {self.emoji[1]}", view=None
-        )
-        self.value = 1
-        self.stop()
-
-    @discord.ui.button(
-        label=f"{advs[1]['name']}", style=discord.ButtonStyle.gray, emoji=emoji[2]
-    )
-    async def adv_two(self, interaction, button):
-        await interaction.response.edit_message(
-            content=f"Merci d'accueillir :  {self.emoji[2]}", view=None
-        )
-        self.value = 2
-        self.stop()
-
-    @discord.ui.button(
-        label=f"{advs[2]['name']}", style=discord.ButtonStyle.green, emoji=emoji[3]
-    )
-    async def adv_tree(self, interaction, button):
-        await interaction.response.edit_message(
-            content=f"Merci d'accueillir :  {self.emoji[3]}", view=None
-        )
-        self.value = 3
-        self.stop()
-
-    @discord.ui.button(
-        label=f"{advs[3]['name']}", style=discord.ButtonStyle.red, emoji=emoji[4]
-    )
-    async def adv_four(self, interaction, button):
-        await interaction.response.edit_message(
-            content=f"Merci d'accueillir :  {self.emoji[4]}", view=None
-        )
-        self.value = 4
-        self.stop()
+        # un bouton par adversaire (value 1..N)
+        for i, adv in enumerate(ADVERSARIES):
+            self.add_item(
+                AdvButton(
+                    i + 1,
+                    adv["name"],
+                    self.styles[i % len(self.styles)],
+                    self.emoji[(i + 1) % len(self.emoji)],
+                )
+            )
 
     async def interaction_check(self, interaction) -> bool:
         if interaction.user != self.ctx.author:

@@ -31,13 +31,13 @@ class BotCommand(commands.Cog):
     @commands.hybrid_command(name="qadd", description="Ajouter une quote")
     @app_commands.describe(quote="Le texte de la citation", username="L'auteur de la citation")
     async def add_quote(self, ctx, quote: str, username: str):
-        db_create_quote(username, quote)
+        await db_create_quote(username, quote)
         await ctx.send("Quote ajouté !")
 
     @commands.hybrid_command(name="qall", description="Voir toutes les quotes")
     async def all_quote(self, ctx):
         await ctx.defer()
-        quotes = db_get_quote()
+        quotes = await db_get_quote()
         if quotes:
             for q in quotes:
                 await ctx.send(f" \"{q['quote']}\", {q['user_name']}")
@@ -47,7 +47,7 @@ class BotCommand(commands.Cog):
     @commands.hybrid_command(name="qr", description="Une quote aléatoire")
     async def random_quote(self, ctx):
         q = []
-        quotes = db_get_quote()
+        quotes = await db_get_quote()
         if quotes:
             for item in quotes:
                 q.append(f" \"{item['quote']}\", {item['user_name']}")
