@@ -22,6 +22,14 @@ SuperBot est un bot Discord codé en Python utilisant la bibliothèque discord.p
 
     !nb_magic: Un jeu où le joueur doit deviner un nombre secret.
 
+### Modération (réservé à l'owner)
+
+    !clear N [#salon]: Supprime les N derniers messages (du salon courant ou du salon indiqué).
+    !clear_user @membre N [#salon]: Supprime jusqu'à N messages de ce membre (salon courant ou indiqué).
+    !clearall [#salon]: Vide entièrement un salon ; le bot propose le choix de la méthode (Clone + suppression, ou Purge en boucle) via des boutons.
+    !delmsg <id>: Supprime un message précis (par ID ou en y répondant).
+    !delchannel [#salon]: Supprime un salon (confirmation requise, irréversible).
+
 ## Prérequis
 
     Python 3.x

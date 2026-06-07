@@ -1,5 +1,7 @@
 # coding: utf-8
 import random
+
+from discord import app_commands
 from discord.ext import commands
 
 from shepard.data.sentences import brooklyn_99_quotes, botcommand
@@ -14,7 +16,7 @@ class BotCommand(commands.Cog):
     async def on_ready(self):
         print(f"{self.__class__.__name__} --- OK")
 
-    @commands.command(name="qhelp", help="Aide pour la création d'une quote")
+    @commands.hybrid_command(name="qhelp", description="Aide pour la création d'une quote")
     async def help_quote(self, ctx):
         await ctx.reply(
             "Créer une quote, easy! \n"
@@ -26,13 +28,15 @@ class BotCommand(commands.Cog):
             mention_author=True,
         )
 
-    @commands.command(name="qadd", help="Ajouter une quote")
-    async def add_quote(self, ctx, quote, username):
+    @commands.hybrid_command(name="qadd", description="Ajouter une quote")
+    @app_commands.describe(quote="Le texte de la citation", username="L'auteur de la citation")
+    async def add_quote(self, ctx, quote: str, username: str):
         db_create_quote(username, quote)
-        await ctx.send(f"Quote ajouté !")
+        await ctx.send("Quote ajouté !")
 
-    @commands.command(name="qall", help="Voir toutes les quotes")
+    @commands.hybrid_command(name="qall", description="Voir toutes les quotes")
     async def all_quote(self, ctx):
+        await ctx.defer()
         quotes = db_get_quote()
         if quotes:
             for q in quotes:
@@ -40,7 +44,7 @@ class BotCommand(commands.Cog):
         else:
             await ctx.send("C'est vide")
 
-    @commands.command(name="qr", help="Une quote aléatoire")
+    @commands.hybrid_command(name="qr", description="Une quote aléatoire")
     async def random_quote(self, ctx):
         q = []
         quotes = db_get_quote()

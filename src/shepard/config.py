@@ -26,6 +26,8 @@ LOG_DIR = LOG_FILE.parent
 PREFIX = os.getenv("PREFIX")
 TOKEN = os.getenv("TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID")) if os.getenv("ADMIN_ID") else None
+# Serveur de dev pour la synchro instantanée des slash commands (sinon synchro globale ~1h)
+GUILD_ID = int(os.getenv("GUILD_ID")) if os.getenv("GUILD_ID") else None
 
 # ----- Salons Discord -----
 TEST_CHANNEL_ID = 1031895034439675986
