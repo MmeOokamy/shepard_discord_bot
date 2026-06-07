@@ -1,10 +1,9 @@
 # coding: utf-8
 import random
-import discord
 from discord.ext import commands
-from db import *  # sqlite execute fonction =)
-from sentence import brooklyn_99_quotes, botcommand
-from def_utils import *
+
+from shepard.data.sentences import brooklyn_99_quotes, botcommand
+from shepard.db.quotes import db_create_quote, db_get_quote
 
 
 class BotCommand(commands.Cog):

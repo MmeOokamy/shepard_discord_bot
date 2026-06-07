@@ -1,10 +1,6 @@
-import os
 import discord
-from discord.ui import View, Button
-from discord.ext import commands
 
-from battle.def_utils_battle import embed_adv
-from db import *  # sqlite execute fonction =)
+from shepard.db.fight import db_fight_get_adversary
 
 
 # Define a simple View that gives us a confirmation menu

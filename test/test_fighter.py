@@ -2,14 +2,13 @@
 import os
 import unittest
 import sys
-import random
 
-sys.path.insert(0, ".")
-from battle.Fighter import Fighter
-from db import *
-from dotenv import load_dotenv
-
-load_dotenv()
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from shepard.battle.fighter import Fighter
+from shepard.db.fight import (
+    db_fight_get_user_special_for_create_fighter,
+    db_fight_get_adversary_by_id_for_create,
+)
 
 
 class TestFighter(unittest.TestCase):

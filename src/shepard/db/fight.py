@@ -1,5 +1,6 @@
-import os
-import sqlite3
+# coding: utf-8
+"""Requêtes du Fight Club (joueurs, adversaires, S.P.E.C.I.A.L, scores)."""
+from shepard.core.database import db, c
 
 LVL_PTS = {
     1: 0,
@@ -15,68 +16,8 @@ LVL_PTS = {
 }
 
 
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
-
-db = sqlite3.connect("shepard.db")
-db.row_factory = dict_factory
-c = db.cursor()
-
-
-def db_connect():
-    with open("sql/init.sql", "r") as sql_file:
-        sql_script = sql_file.read()
-    c.executescript(sql_script)
-
-
-def db_user_exist(user_id):
-    return c.execute(
-        "SELECT 1 FROM user WHERE user_id = ?", (user_id,)
-    ).fetchone() is not None
-
-
-def db_user_exist_return_id(user_id):
-    user = c.execute(
-        "SELECT user_id FROM user WHERE user_id = ?", (user_id,)
-    ).fetchone()
-    if user is not None:
-        return user["user_id"]
-
-
-def db_user_create(user_id, user_name):
-    c.execute(
-        "INSERT INTO user (user_id, user) VALUES (?, ?)",
-        (user_id, user_name),
-    )
-    c.execute(
-        "INSERT INTO fight_player (user_id) VALUES (?)",
-        (user_id,),
-    )
-    db.commit()
-
-
-###########################
-# ###   BOT COMMAND   ### #
-###########################
-def db_create_quote(user, quote):
-    c.execute(
-        "INSERT INTO quotes (quote, user_name) VALUES (?, ?)",
-        (quote, user),
-    )
-    db.commit()
-
-
-def db_get_quote():
-    return c.execute("SELECT * FROM quotes").fetchall()
-
-
-###########################
-# ###   BOT  BATTLE   ### #
-###########################
+def _add_stat(a, b):
+    return max(0, int(a) + int(b))
 
 
 ###################
@@ -192,7 +133,6 @@ def db_fight_get_adversary_by_id(adv_id):
 ###################
 #  S.P.E.C.I.A.L  #
 ###################
-
 def db_fight_get_special():
     """Donne les informations de la table fight_special"""
     return c.execute("SELECT * FROM fight_special").fetchall()
@@ -247,10 +187,6 @@ def db_fight_special_add_pts(
         (strength, perception, endurance, charisma, intelligence, agility, luck, int(user_id)),
     )
     db.commit()
-
-
-def _add_stat(a, b):
-    return max(0, int(a) + int(b))
 
 
 def db_fight_get_special_total(user_id, adv_id=0):

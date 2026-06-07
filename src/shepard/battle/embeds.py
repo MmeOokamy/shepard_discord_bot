@@ -1,8 +1,14 @@
 # coding: utf-8
 import discord
-from discord.ext import commands
 
-from db import *
+from shepard.config import img_path
+from shepard.db.fight import (
+    db_fight_get_adversary,
+    db_fight_get_adversary_by_id,
+    db_fight_get_adversary_by_id_for_create,
+    db_fight_get_user_special_for_create_fighter,
+    db_fight_get_user_xp_lvl,
+)
 
 
 def special_txt(player):
@@ -73,7 +79,7 @@ def embed_adv(ctx, adv_id):
     adv = db_fight_get_adversary_by_id(adv_id)
     colors = ("", 0x1ABC9C, 0xE91E63, 0xF1C40F, 0xE74C3C)
     special = db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
-    file = discord.File(f"battle/img/{adv['img']}", filename=adv["img"])
+    file = discord.File(img_path(adv["img"]), filename=adv["img"])
     img = f"attachment://{adv['img']}"
     embed = discord.Embed(
         description=f">>> {special['pts']} pts / victoire", color=colors[adv["id"]]
@@ -102,7 +108,7 @@ def embed_advs(ctx):
     colors = ("", 0x1ABC9C, 0xE91E63, 0xF1C40F, 0xE74C3C)
     for adv in adv_list:
         special = db_fight_get_adversary_by_id_for_create(adv["id"], ctx.author.id)
-        file = discord.File(f"battle/img/{adv['img']}", filename=adv["img"])
+        file = discord.File(img_path(adv["img"]), filename=adv["img"])
         files.append(file)
         img = f"attachment://{adv['img']}"
         embed = discord.Embed(

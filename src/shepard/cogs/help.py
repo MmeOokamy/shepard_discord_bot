@@ -1,10 +1,9 @@
 # coding: utf-8
 import discord
-from discord.ui import View, Button
 from discord.ext import commands
-from battle.battle_buttons import *
-from battle.def_utils_battle import *
-from def_utils import user_exist
+
+from shepard.config import img_path
+from shepard.core.checks import user_exist
 
 
 class HelpBot(commands.Cog):
@@ -23,7 +22,7 @@ class HelpBot(commands.Cog):
             description="*Pensez bien a préfixer les commandes par un !  ( pas deux)*",
             color=discord.Colour.random(),
         )
-        file = discord.File(f"asset/img/help.png", filename="help.png")
+        file = discord.File(img_path("help.png"), filename="help.png")
         embed.set_thumbnail(url="attachment://help.png")
 
         embed.add_field(

@@ -1,13 +1,7 @@
 # coding: utf-8
 import random
-import discord
 import asyncio
-from discord.ui import Button, View
 from discord.ext import commands
-from db import *  # sqlite execute fonction =)
-from sentence import *
-from def_utils import *
-from Buttons import *
 
 
 class BotGames(commands.Cog):

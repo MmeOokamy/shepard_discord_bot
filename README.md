@@ -52,12 +52,23 @@ Exécutez le fichier main.py pour démarrer le bot :
 
 ## Structure du projet
 
-    main.py: Fichier principal du bot Discord.
-    bot_command.py: Gestion des commandes de citation.
-    bot_battle.py: Gestion des commandes de combat.
-    bot_games.py: Gestion des jeux.
-    Buttons.py: Définition des boutons d'interaction pour le bot.
-    db.py: Gestion de la base de donnée.
+```
+main.py                       Point d'entrée : initialise la DB et charge les cogs.
+sql/                          Schéma SQLite (init.sql) et dump.
+assets/img/                   Images utilisées dans les embeds.
+test/                         Tests unitaires.
+src/shepard/
+├── config.py                 Chemins, variables d'environnement, IDs de salons.
+├── core/
+│   ├── database.py           Connexion SQLite (singleton) + db_connect().
+│   ├── logging_setup.py      Configuration du logger.
+│   ├── checks.py             Décorateurs is_me / user_exist.
+│   └── system.py             État des services systemd.
+├── db/                       Requêtes SQL (users, quotes, fight).
+├── data/sentences.py         Phrases et citations en dur.
+├── battle/                   Logique de combat : fighter, embeds, views.
+└── cogs/                     Extensions Discord (shepard, battle, commands, games, help).
+```
 
 ### Contribution
 

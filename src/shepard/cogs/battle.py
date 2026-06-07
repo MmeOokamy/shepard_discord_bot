@@ -1,22 +1,35 @@
 # coding: utf-8
-import os
-import sys
-import asyncio
 import random
 import logging
 
 import discord
 from discord.ext import commands
-from battle.Fighter import Fighter
-from def_utils import user_exist
-from battle.def_utils_battle import (
+
+from shepard.config import img_path
+from shepard.core.checks import user_exist
+from shepard.battle.fighter import Fighter
+from shepard.battle.embeds import (
     special_txt,
-    embed_one,
     embed_atk,
+    embed_adv,
     embed_advs,
     embed_user,
 )
-from battle.battle_buttons import *
+from shepard.battle.views import (
+    FightStart,
+    FightAdversary,
+    FightChoices,
+    FightMenu,
+)
+from shepard.db.fight import (
+    db_fight_podium,
+    db_fight_user_detail,
+    db_fight_get_stats_by_user,
+    db_fight_get_user_special_for_create_fighter,
+    db_fight_get_adversary_by_id_for_create,
+    db_fight_win,
+    db_fight_loose,
+)
 
 # Obtenir un logger spécifique pour ce module
 logger = logging.getLogger('discord_bot.battle')
@@ -45,7 +58,7 @@ class BotBattle(commands.Cog):
                 description=f"xp : {players[0]['exp']}",
                 color=discord.Colour.random(),
             )
-            file = discord.File(f"battle/img/rank.png", filename="rank.png")
+            file = discord.File(img_path("rank.png"), filename="rank.png")
             embed.set_thumbnail(url="attachment://rank.png")
 
 
@@ -180,7 +193,7 @@ class BotBattle(commands.Cog):
         async def healer(player):
             pv_potion = player.take_care_of_yourself()
             embed = discord.Embed(title="Utilise Soin", color=discord.Colour.random())
-            file = discord.File(f"battle/img/potion.png", filename="potion.png")
+            file = discord.File(img_path("potion.png"), filename="potion.png")
             embed.set_author(name=player.name, icon_url="attachment://potion.png")
             embed.add_field(
                 name="Plonge la main dans sa poche et en sort une petite fiole....",

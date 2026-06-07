@@ -1,16 +1,17 @@
 # coding: utf-8
 import discord
-from discord.ui import View, Button
 from discord.ext import commands
-from battle.battle_buttons import *
-from battle.def_utils_battle import *
-from def_utils import user_exist, is_me, check_service_status
+
+from shepard.config import TEST_CHANNEL_ID, PROD_CHANNEL_ID
+from shepard.core.checks import is_me
+from shepard.core.system import check_service_status
+
 
 class CommandantShepard(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.test_chan = 1031895034439675986
-        self.prod_chan = 861613275414528030
+        self.test_chan = TEST_CHANNEL_ID
+        self.prod_chan = PROD_CHANNEL_ID
 
     @commands.Cog.listener()
     async def on_ready(self):
