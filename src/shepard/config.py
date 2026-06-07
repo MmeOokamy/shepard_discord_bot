@@ -16,7 +16,11 @@ SQL_DIR = BASE_DIR / "sql"
 INIT_SQL_PATH = str(SQL_DIR / "init.sql")
 ASSETS_DIR = BASE_DIR / "assets"
 IMG_DIR = ASSETS_DIR / "img"
-LOG_DIR = BASE_DIR / "logs"
+
+# Fichier de log : chemin depuis .env (relatif => ancré sur la racine projet)
+_log_file = os.getenv("LOG_FILE", "logs/discord_bot.log")
+LOG_FILE = Path(_log_file) if os.path.isabs(_log_file) else BASE_DIR / _log_file
+LOG_DIR = LOG_FILE.parent
 
 # ----- Environnement -----
 PREFIX = os.getenv("PREFIX")

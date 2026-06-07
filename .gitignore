@@ -8,3 +8,4 @@ app.py
 .idea
 __pycache__
 shepard.db
+logs/

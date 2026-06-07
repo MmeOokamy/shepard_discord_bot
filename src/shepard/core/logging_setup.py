@@ -3,11 +3,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from shepard.config import LOG_DIR
+from shepard.config import LOG_DIR, LOG_FILE
 
 
 def setup_logging():
-    LOG_DIR.mkdir(exist_ok=True)
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
 
     logger = logging.getLogger("discord_bot")
     logger.setLevel(logging.INFO)
@@ -21,7 +21,7 @@ def setup_logging():
     console_handler.setFormatter(formatter)
 
     file_handler = RotatingFileHandler(
-        LOG_DIR / "discord_bot.log",
+        LOG_FILE,
         maxBytes=10 * 1024 * 1024,  # 10 Mo
         backupCount=5,
     )
